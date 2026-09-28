@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Train the static PE classifier and export it for the Rust engine.
 
-This is the Python side of AetherAV's ML pipeline. It trains a model on a
+This is the Python side of BlackDemonAV's ML pipeline. It trains a model on a
 labeled corpus of PE feature vectors and emits a JSON file that
-`aether-ml` loads at runtime (`assets/models/pe.json`).
+`blackdemon-ml` loads at runtime (`assets/models/pe.json`).
 
 Two export paths:
   * --kind logistic : exports standardized logistic-regression params as the
@@ -12,7 +12,7 @@ Two export paths:
     optional `onnx` backend (heavier, higher accuracy).
 
 The FEATURES list below is the contract with Rust: it must match
-`aether_ml::features::PE_FEATURES` exactly, in order.
+`blackdemon_ml::features::PE_FEATURES` exactly, in order.
 
 Usage:
     python tools/train_pe_model.py --data features.csv --label-col label \

@@ -1,0 +1,38 @@
+[package]
+name = "blackdemon-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "The BlackDemon AV scan orchestrator: pipeline, heuristics, parallelism."
+
+[features]
+default = ["yara"]
+# Forward the YARA-X engine feature down to blackdemon-signatures.
+yara = ["blackdemon-signatures/yara"]
+
+[dependencies]
+blackdemon-common = { workspace = true }
+blackdemon-config = { workspace = true }
+blackdemon-signatures = { workspace = true }
+blackdemon-parsers = { workspace = true }
+blackdemon-unpack = { workspace = true }
+blackdemon-intel = { workspace = true }
+blackdemon-sandbox = { workspace = true }
+blackdemon-ml = { workspace = true }
+blackdemon-llm = { workspace = true }
+blackdemon-plugins = { workspace = true }
+tracing = { workspace = true }
+memmap2 = { workspace = true }
+walkdir = { workspace = true }
+rayon = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+criterion = { workspace = true }
+zip = { workspace = true }
+
+[[bench]]
+name = "scan_bench"
+harness = false
+

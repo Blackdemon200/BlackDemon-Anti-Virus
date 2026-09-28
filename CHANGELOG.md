@@ -1,4 +1,4 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to BlackDemon AV are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/); this project uses calendar-style
@@ -19,7 +19,7 @@ versions (e.g. `2026.1.0`).
 - Ed25519-signed feed and model updates with anti-rollback; reproducible builds.
 - Desktop app (Tauri) with system tray and a status widget.
 - Premium signed installers for Windows, macOS and Linux + release CI.
-- VirusTotal-contributor scan format (`aether vt-scan`).
+- VirusTotal-contributor scan format (`blackdemon vt-scan`).
 
 ### Security
 - Offline signing key model: a compromised server cannot push malicious updates.

@@ -1,15 +1,15 @@
-﻿# BlackDemon AV Windows real-time user-mode service - the companion to the
+# BlackDemon AV Windows real-time user-mode service - the companion to the
 # BlackDemon AV.sys minifilter. Windows-only; intentionally OUTSIDE the root
 # workspace (its own [workspace]) so it never affects the Linux build.
 [package]
-name = "aether-rtsvc"
+name = "blackdemon-rtsvc"
 version = "0.1.0"
 edition = "2021"
 
 [workspace]
 
 [[bin]]
-name = "aether-rtsvc"
+name = "blackdemon-rtsvc"
 path = "src/main.rs"
 
 [target.'cfg(windows)'.dependencies]
@@ -18,7 +18,7 @@ windows-sys = { version = "0.59", features = [
     "Win32_Storage_InstallableFileSystems",
 ] }
 windows-service = "0.7"
-aether-core = { path = "../../../../crates/aether-core" }
-aether-config = { path = "../../../../crates/aether-config" }
-aether-common = { path = "../../../../crates/aether-common" }
+blackdemon-core = { path = "../../../../crates/blackdemon-core" }
+blackdemon-config = { path = "../../../../crates/blackdemon-config" }
+blackdemon-common = { path = "../../../../crates/blackdemon-common" }
 

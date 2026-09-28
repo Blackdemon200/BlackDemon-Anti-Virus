@@ -1,11 +1,11 @@
-﻿# Benchmarking BlackDemon AV (honest, reproducible numbers)
+# Benchmarking BlackDemon AV (honest, reproducible numbers)
 
 No paid lab is required to publish credible detection numbers - only a real
 sample set, a real benign set, and full disclosure. This is how we do it.
 
 ## Run it
 ```bash
-cargo build --release -p aether-cli
+cargo build --release -p blackdemon-cli
 ./tools/benchmark.sh --malware <malware_dir> --clean <benign_dir> --name "MOTIF 2024"
 # -> dist/benchmark-report.md  (confusion matrix + metrics + methodology)
 ```

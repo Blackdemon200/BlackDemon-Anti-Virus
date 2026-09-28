@@ -1,0 +1,10 @@
+﻿# Scheduled full scan (paired with blackdemon-scan.timer).
+[Unit]
+Description=BlackDemonAV scheduled full scan
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/blackdemon scan / --recursive --quarantine /var/lib/blackdemon/quarantine
+WorkingDirectory=/usr/local/share/blackdemon
+Nice=10
+IOSchedulingClass=idle

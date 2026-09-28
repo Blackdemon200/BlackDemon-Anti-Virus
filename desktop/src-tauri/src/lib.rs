@@ -1,12 +1,12 @@
-//! AetherAV desktop - Tauri shell wired to the real engine.
+//! BlackDemonAV desktop - Tauri shell wired to the real engine.
 //!
 //! Every panel is fed by live data: engine counts (signatures incl. downloaded
 //! malware hashes, YARA rules, intel IOCs), real system metrics via `sysinfo`,
 //! live process activity, and a 2-second `metrics` event stream. `update_intel`
 //! downloads free abuse.ch feeds and hot-reloads the signature database.
 
-use aether_intel::{Feed, IntelStore};
-use aether_quarantine::Vault;
+use blackdemon_intel::{Feed, IntelStore};
+use blackdemon_quarantine::Vault;
 use serde_json::{json, Value};
 use std::collections::VecDeque;
 use std::path::{Path, PathBuf};
@@ -50,13 +50,13 @@ fn device_seed(assets: &Path) -> [u8; 32] {
 }
 
 /// Build the per-request auth headers: the device pubkey, a fresh timestamp, and
-/// an Ed25519 signature over `aether-feed:{ts}`. Returns owned strings the caller
+/// an Ed25519 signature over `blackdemon-feed:{ts}`. Returns owned strings the caller
 /// borrows from when calling `http_bytes`.
 fn signed_headers(assets: &Path) -> (String, String, String) {
     let seed = device_seed(assets);
-    let pubk = aether_intel::public_hex(&seed);
+    let pubk = blackdemon_intel::public_hex(&seed);
     let ts = now_secs().to_string();
-    let sig = aether_intel::sign_detached(&seed, format!("aether-feed:{ts}").as_bytes());
+    let sig = blackdemon_intel::sign_detached(&seed, format!("blackdemon-feed:{ts}").as_bytes());
     (pubk, ts, sig)
 }
 use tauri::{Emitter, Manager};
@@ -166,8 +166,8 @@ impl Settings {
     }
 }
 
-fn build_scanner(assets: &Path, s: &Settings) -> Option<aether_core::Scanner> {
-    let mut cfg = aether_config::Config::default();
+fn build_scanner(assets: &Path, s: &Settings) -> Option<blackdemon_core::Scanner> {
+    let mut cfg = blackdemon_config::Config::default();
     cfg.engines.hash_db = assets.join("signatures/hashes.db");
     cfg.engines.yara_rules = assets.join("rules");
     cfg.engines.ml_model = assets.join("models/pe.json");
@@ -186,13 +186,13 @@ fn build_scanner(assets: &Path, s: &Settings) -> Option<aether_core::Scanner> {
     } else {
         s.llm_runner.clone()
     };
-    aether_core::Scanner::new(cfg).ok()
+    blackdemon_core::Scanner::new(cfg).ok()
 }
 
 /// Shared, mutable application state.
 struct AppState {
     assets: PathBuf,
-    scanner: Mutex<Option<aether_core::Scanner>>,
+    scanner: Mutex<Option<blackdemon_core::Scanner>>,
     settings: Mutex<Settings>,
     sys: Mutex<System>,
     nets: Mutex<Networks>,
@@ -297,7 +297,7 @@ fn scan_and_record(app: &tauri::AppHandle, source: &str, path: &Path) {
 }
 
 /// Worst-disposition string + best verdict for a report row.
-fn report_row(r: &aether_common::ScanReport) -> Value {
+fn report_row(r: &blackdemon_common::ScanReport) -> Value {
     let worst = r.verdicts.iter().max_by(|a, b| a.level.cmp(&b.level));
     json!({
         "path": r.path.display().to_string(),
@@ -493,7 +493,7 @@ fn dashboard_data(state: tauri::State<AppState>) -> Value {
     let threats = *state.threats_blocked.lock().unwrap();
     let metrics = metrics_snapshot(&state);
     let procs = metrics["processes"].as_u64().unwrap_or(0);
-    let conns = aether_realtime::netmon::connections();
+    let conns = blackdemon_realtime::netmon::connections();
     let net_conns = conns.len() as u64;
     let net_flagged = conns.iter().filter(|c| c.flagged().is_some()).count() as u64;
 
@@ -566,7 +566,7 @@ fn fmt_num(n: u64) -> String {
 
 fn quarantine_count(state: &AppState) -> u64 {
     let vault = state.assets.join("../quarantine");
-    aether_quarantine::Vault::open(&vault).map(|v| v.list().len() as u64).unwrap_or(0)
+    blackdemon_quarantine::Vault::open(&vault).map(|v| v.list().len() as u64).unwrap_or(0)
 }
 
 /// Build recent-activity rows and a behavior graph from the live process table.
@@ -591,7 +591,7 @@ fn process_activity(state: &AppState) -> (Value, Value) {
     // Center = this host; spokes = its actual external endpoints, with any on
     // malware-associated ports or known-bad IPs (intel) marked malicious.
     use std::collections::HashSet;
-    let conns = aether_realtime::netmon::connections();
+    let conns = blackdemon_realtime::netmon::connections();
     let intel = IntelStore::load_or_new(state.assets.join("models/intel.json")).ok();
 
     let established = conns.iter().filter(|c| c.state == "ESTABLISHED").count();
@@ -791,14 +791,14 @@ fn scan_processes(state: tauri::State<AppState>) -> Value {
 /// Learn the current running executables as the Process Sentinel baseline.
 #[tauri::command]
 fn sentinel_learn(state: tauri::State<AppState>) -> Value {
-    use aether_realtime::sentinel;
+    use blackdemon_realtime::sentinel;
     let mut base = serde_json::Map::new();
     for p in sentinel::snapshot() {
         if let (Some(exe), false) = (&p.exe, p.exe_deleted) {
             let key = exe.display().to_string();
             if !base.contains_key(&key) {
                 if let Ok(d) = std::fs::read(exe) {
-                    base.insert(key, json!(aether_signatures::hash_bytes(&d).sha256));
+                    base.insert(key, json!(blackdemon_signatures::hash_bytes(&d).sha256));
                 }
             }
         }
@@ -822,9 +822,9 @@ fn sentinel_watch(app: tauri::AppHandle) -> Value {
         }
         let h = app.clone();
         std::thread::spawn(move || {
-            let res = aether_realtime::exectrace::watch_execs(|ev| {
+            let res = blackdemon_realtime::exectrace::watch_execs(|ev| {
                 let exe = std::fs::read_link(format!("/proc/{}/exe", ev.pid)).ok();
-                let name = aether_realtime::sentinel::proc_name(ev.pid);
+                let name = blackdemon_realtime::sentinel::proc_name(ev.pid);
                 let (mut risk, mut sig, mut mal) = ("clean".to_string(), String::new(), false);
                 if let Some(exe) = &exe {
                     let st = h.state::<AppState>();
@@ -834,7 +834,7 @@ fn sentinel_watch(app: tauri::AppHandle) -> Value {
                             risk = r.disposition().to_string().to_lowercase();
                             sig = r.verdicts.iter().max_by(|a, b| a.level.cmp(&b.level))
                                 .map(|v| v.signature.clone()).unwrap_or_default();
-                            mal = r.disposition() == aether_common::ThreatLevel::Malicious;
+                            mal = r.disposition() == blackdemon_common::ThreatLevel::Malicious;
                         }
                     }
                 }
@@ -864,7 +864,7 @@ fn sentinel_watch(app: tauri::AppHandle) -> Value {
 /// Process Sentinel scan: new/unknown apps (by hash), hidden processes, stealth.
 #[tauri::command]
 fn sentinel_scan(state: tauri::State<AppState>) -> Value {
-    use aether_realtime::sentinel;
+    use blackdemon_realtime::sentinel;
     use std::collections::HashMap;
 
     let snap = sentinel::snapshot();
@@ -874,7 +874,7 @@ fn sentinel_scan(state: tauri::State<AppState>) -> Value {
             let key = exe.display().to_string();
             if !exe_hash.contains_key(&key) {
                 if let Ok(d) = std::fs::read(exe) {
-                    exe_hash.insert(key, aether_signatures::hash_bytes(&d).sha256);
+                    exe_hash.insert(key, blackdemon_signatures::hash_bytes(&d).sha256);
                 }
             }
         }
@@ -925,7 +925,7 @@ fn sentinel_scan(state: tauri::State<AppState>) -> Value {
 /// Live TCP connections + malicious-port flags + known-bad-IP correlation.
 #[tauri::command]
 fn network_status(state: tauri::State<AppState>) -> Value {
-    use aether_realtime::netmon;
+    use blackdemon_realtime::netmon;
     let conns = netmon::connections();
     let listening = conns.iter().filter(|c| c.state == "LISTEN").count();
     let established = conns.iter().filter(|c| c.state == "ESTABLISHED").count();
@@ -997,8 +997,8 @@ fn network_status(state: tauri::State<AppState>) -> Value {
         .collect();
     rows.sort_by_key(|v| if v["risk"] == "malicious" { 0 } else { 1 });
 
-    let intel_ips = intel.as_ref().map(|s| s.count_kind(aether_intel::IocKind::Ipv4)).unwrap_or(0);
-    let intel_domains = intel.as_ref().map(|s| s.count_kind(aether_intel::IocKind::Domain)).unwrap_or(0);
+    let intel_ips = intel.as_ref().map(|s| s.count_kind(blackdemon_intel::IocKind::Ipv4)).unwrap_or(0);
+    let intel_domains = intel.as_ref().map(|s| s.count_kind(blackdemon_intel::IocKind::Domain)).unwrap_or(0);
     json!({
         "total": conns.len(),
         "listening": listening,
@@ -1062,7 +1062,7 @@ fn intel_update(state: &AppState) -> (usize, usize) {
     let full = key.is_some() && std::env::var("ABUSE_CH_FULL").is_ok();
 
     // Rich IOCs (URLs / IPs / domains + their hashes) -> JSON store.
-    type P = fn(&str, u64) -> aether_common::Result<Feed>;
+    type P = fn(&str, u64) -> blackdemon_common::Result<Feed>;
     let mut sources: Vec<(&str, P)> = if full {
         vec![
             ("https://threatfox.abuse.ch/export/csv/full/", Feed::from_threatfox_csv),
@@ -1130,7 +1130,7 @@ fn intel_update(state: &AppState) -> (usize, usize) {
 /// greeting deterministically (no race against webview init).
 #[tauri::command]
 fn app_ready(app: tauri::AppHandle) {
-    notify(&app, "AetherAV - Protection Active",
+    notify(&app, "BlackDemonAV - Protection Active",
            "Real-time engine running: 9 detection layers + Aegis-50M.");
 }
 
@@ -1154,7 +1154,7 @@ fn update_intel(app: tauri::AppHandle, state: tauri::State<AppState>) -> Value {
 fn update_now(app: tauri::AppHandle, state: tauri::State<AppState>) -> Value {
     // Load our current store first so we can ask the server only for what's new.
     let store_path = state.assets.join("models/intel.json");
-    let mut store = aether_intel::IntelStore::load_or_new(&store_path).unwrap_or_default();
+    let mut store = blackdemon_intel::IntelStore::load_or_new(&store_path).unwrap_or_default();
     let cur_ver = store.version;
     // Use the explicit override if set, else the built-in obfuscated endpoint.
     let cfg_url = state.settings.lock().unwrap().update_url.clone();
@@ -1164,16 +1164,16 @@ fn update_now(app: tauri::AppHandle, state: tauri::State<AppState>) -> Value {
     // Prove this device's identity with a fresh signed request (no shared secret).
     let (pubk, ts, sig) = signed_headers(&state.assets);
     let auth = [
-        ("x-aether-pub", pubk.as_str()),
-        ("x-aether-ts", ts.as_str()),
-        ("x-aether-sig", sig.as_str()),
+        ("x-blackdemon-pub", pubk.as_str()),
+        ("x-blackdemon-ts", ts.as_str()),
+        ("x-blackdemon-sig", sig.as_str()),
     ];
     let bytes = match http_bytes(&url, &auth) {
         Ok(b) => b,
         Err(e) => return json!({"ok": false, "message": format!("Fetch failed: {e}")}),
     };
     let text = String::from_utf8_lossy(&bytes);
-    let feed = match aether_intel::Feed::from_json(&text) {
+    let feed = match blackdemon_intel::Feed::from_json(&text) {
         Ok(f) => f,
         Err(e) => return json!({"ok": false, "message": format!("Bad feed: {e}")}),
     };
@@ -1221,7 +1221,7 @@ fn update_status(state: tauri::State<AppState>) -> Value {
         .ok()
         .and_then(|t| serde_json::from_str(&t).ok())
         .unwrap_or(json!({}));
-    let version = aether_intel::IntelStore::load_or_new(state.assets.join("models/intel.json"))
+    let version = blackdemon_intel::IntelStore::load_or_new(state.assets.join("models/intel.json"))
         .map(|s| s.version)
         .unwrap_or(0);
     json!({
@@ -1264,7 +1264,7 @@ fn feed_text(url: &str, key: Option<&str>) -> Option<String> {
     // External feeds (abuse.ch) authenticate with their own `Auth-Key` header.
     let h: Vec<(&str, &str)> = key.map(|k| vec![("Auth-Key", k)]).unwrap_or_default();
     let bytes = http_bytes(url, &h).ok()?;
-    if let Some(members) = aether_unpack::try_extract(&bytes, aether_unpack::Limits::default()) {
+    if let Some(members) = blackdemon_unpack::try_extract(&bytes, blackdemon_unpack::Limits::default()) {
         if let Some(m) = members.into_iter().max_by_key(|f| f.data.len()) {
             return Some(String::from_utf8_lossy(&m.data).into_owned());
         }
@@ -1308,10 +1308,10 @@ fn set_settings(state: tauri::State<AppState>, settings: Settings) -> Value {
 
 // ---- Network & theft shields (firewall / web protection / stealer decoys) ----
 
-fn shield_ruleset(assets: &Path) -> aether_firewall::RuleSet {
-    use aether_intel::{IntelStore, IocKind};
-    let mut rs = aether_firewall::RuleSet::new();
-    for (port, name, _sev) in aether_realtime::netmon::MALICIOUS_PORTS {
+fn shield_ruleset(assets: &Path) -> blackdemon_firewall::RuleSet {
+    use blackdemon_intel::{IntelStore, IocKind};
+    let mut rs = blackdemon_firewall::RuleSet::new();
+    for (port, name, _sev) in blackdemon_realtime::netmon::MALICIOUS_PORTS {
         rs.block_port(*port, *name);
     }
     if let Ok(store) = IntelStore::load_or_new(assets.join("models/intel.json")) {
@@ -1329,7 +1329,7 @@ fn shield_ruleset(assets: &Path) -> aether_firewall::RuleSet {
 
 #[tauri::command]
 fn shields_status(state: tauri::State<AppState>) -> Value {
-    use aether_intel::{IntelStore, IocKind};
+    use blackdemon_intel::{IntelStore, IocKind};
     let mut ips = 0usize;
     let mut domains = 0usize;
     if let Ok(store) = IntelStore::load_or_new(state.assets.join("models/intel.json")) {
@@ -1342,9 +1342,9 @@ fn shields_status(state: tauri::State<AppState>) -> Value {
         }
     }
     json!({
-        "platform": aether_firewall::Platform::current().as_str(),
+        "platform": blackdemon_firewall::Platform::current().as_str(),
         "firewall_ips": ips.min(2000),
-        "firewall_ports": aether_realtime::netmon::MALICIOUS_PORTS.len(),
+        "firewall_ports": blackdemon_realtime::netmon::MALICIOUS_PORTS.len(),
         "web_domains": domains,
     })
 }
@@ -1352,17 +1352,17 @@ fn shields_status(state: tauri::State<AppState>) -> Value {
 #[tauri::command]
 fn firewall_apply(state: tauri::State<AppState>) -> Value {
     let rs = shield_ruleset(&state.assets);
-    let p = aether_firewall::Platform::current();
+    let p = blackdemon_firewall::Platform::current();
     match rs.install(p) {
         Ok(msg) => json!({"ok": true, "message": format!("Firewall applied: {msg}")}),
-        Err(e) => json!({"ok": false, "message": format!("Could not apply ({e}). Run AetherAV as admin/root.")}),
+        Err(e) => json!({"ok": false, "message": format!("Could not apply ({e}). Run BlackDemonAV as admin/root.")}),
     }
 }
 
 #[tauri::command]
 fn webprotect_apply(state: tauri::State<AppState>) -> Value {
-    use aether_firewall::web;
-    use aether_intel::{IntelStore, IocKind};
+    use blackdemon_firewall::web;
+    use blackdemon_intel::{IntelStore, IocKind};
     let store = match IntelStore::load_or_new(state.assets.join("models/intel.json")) {
         Ok(s) => s,
         Err(e) => return json!({"ok": false, "message": format!("intel load failed: {e}")}),
@@ -1382,7 +1382,7 @@ fn webprotect_apply(state: tauri::State<AppState>) -> Value {
 
 #[tauri::command]
 fn stealer_arm(state: tauri::State<AppState>) -> Value {
-    use aether_realtime::stealerguard::Decoys;
+    use blackdemon_realtime::stealerguard::Decoys;
     let dir = state.assets.join("../decoys");
     match Decoys::plant(&dir) {
         Ok(d) => json!({"ok": true, "message": format!("Planted {} wallet/credential decoys in {}", d.files.len(), dir.display())}),
@@ -1396,7 +1396,7 @@ fn stealer_arm(state: tauri::State<AppState>) -> Value {
 /// + exploit-staging indicators. Mirrors the CLI `emulate` / `exploitscan`.
 #[tauri::command]
 fn emulate_file(path: String) -> Value {
-    use aether_sandbox::{Bitness, Sandbox};
+    use blackdemon_sandbox::{Bitness, Sandbox};
     let data = match std::fs::read(&path) {
         Ok(d) => d,
         Err(e) => return json!({"error": format!("reading {path}: {e}")}),
@@ -1410,7 +1410,7 @@ fn emulate_file(path: String) -> Value {
                    "detail": v.detail.clone().unwrap_or_default(), "mitre": v.mitre})
         })
         .collect();
-    let exploits: Vec<String> = aether_sandbox::exploit::scan_exploit(&data)
+    let exploits: Vec<String> = blackdemon_sandbox::exploit::scan_exploit(&data)
         .iter()
         .map(|h| h.describe())
         .collect();
@@ -1431,7 +1431,7 @@ fn behavior_analyze(path: String) -> Value {
         Ok(t) => t,
         Err(e) => return json!({"error": format!("reading {path}: {e}")}),
     };
-    match aether_behavior::BehaviorEngine::new().analyze_json(&txt) {
+    match blackdemon_behavior::BehaviorEngine::new().analyze_json(&txt) {
         Ok(report) => {
             let verdicts: Vec<Value> = report
                 .verdicts
@@ -1451,12 +1451,12 @@ fn behavior_analyze(path: String) -> Value {
 /// Online-learn the per-host anomaly baseline from a benign trace. Mirrors `learn`.
 #[tauri::command]
 fn anomaly_learn(state: tauri::State<AppState>, path: String) -> Value {
-    use aether_anomaly::{AnomalyEngine, Baseline};
+    use blackdemon_anomaly::{AnomalyEngine, Baseline};
     let txt = match std::fs::read_to_string(&path) {
         Ok(t) => t,
         Err(e) => return json!({"error": format!("reading {path}: {e}")}),
     };
-    let events = match aether_behavior::Event::from_json(&txt) {
+    let events = match blackdemon_behavior::Event::from_json(&txt) {
         Ok(e) => e,
         Err(e) => return json!({"error": e}),
     };
@@ -1478,12 +1478,12 @@ fn anomaly_learn(state: tauri::State<AppState>, path: String) -> Value {
 /// Score a trace against the learned baseline. Mirrors `anomaly`.
 #[tauri::command]
 fn anomaly_score(state: tauri::State<AppState>, path: String) -> Value {
-    use aether_anomaly::{AnomalyEngine, Baseline};
+    use blackdemon_anomaly::{AnomalyEngine, Baseline};
     let txt = match std::fs::read_to_string(&path) {
         Ok(t) => t,
         Err(e) => return json!({"error": format!("reading {path}: {e}")}),
     };
-    let events = match aether_behavior::Event::from_json(&txt) {
+    let events = match blackdemon_behavior::Event::from_json(&txt) {
         Ok(e) => e,
         Err(e) => return json!({"error": e}),
     };
@@ -1575,12 +1575,12 @@ fn history_html(rows: &[Value]) -> String {
         ));
     }
     format!(
-        "<!doctype html><html><head><meta charset='utf-8'><title>AetherAV Scan Report</title>\
+        "<!doctype html><html><head><meta charset='utf-8'><title>BlackDemonAV Scan Report</title>\
 <style>body{{font-family:system-ui,sans-serif;background:#0b1418;color:#d6e6ec;padding:32px}}\
 h1{{color:#27d8ee}}table{{border-collapse:collapse;width:100%;margin-top:16px}}\
 th,td{{border-bottom:1px solid #1d3540;padding:8px 12px;font-size:13px;text-align:left}}\
 th{{color:#7fb4c4;text-transform:uppercase;font-size:11px}}</style></head><body>\
-<h1>&#128737; AetherAV Scan Report</h1><p>{} scans recorded · generated by AetherAV.</p>\
+<h1>&#128737; BlackDemonAV Scan Report</h1><p>{} scans recorded · generated by BlackDemonAV.</p>\
 <table><thead><tr><th>Time</th><th>Source</th><th>Path</th><th>Scanned</th><th>Threats</th><th>Items</th></tr></thead>\
 <tbody>{}</tbody></table><p style='margin-top:24px;color:#5d7d88'>Tip: print this page to PDF for a portable report.</p></body></html>",
         rows.len(), body
@@ -1600,7 +1600,7 @@ fn export_report(app: tauri::AppHandle, state: tauri::State<AppState>, format: S
     let Some(dest) = app
         .dialog()
         .file()
-        .set_file_name(format!("aetherav-report.{ext}"))
+        .set_file_name(format!("blackdemonav-report.{ext}"))
         .blocking_save_file()
     else {
         return json!({"ok": false, "message": "Export cancelled"});
@@ -1651,16 +1651,16 @@ pub fn run() {
         use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
         use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 
-        let open_i = MenuItem::with_id(app, "open", "Open AetherAV", true, None::<&str>)?;
+        let open_i = MenuItem::with_id(app, "open", "Open BlackDemonAV", true, None::<&str>)?;
         let scan_i = MenuItem::with_id(app, "quickscan", "Quick Scan", true, None::<&str>)?;
         let widget_i = MenuItem::with_id(app, "widget", "Toggle Widget", true, None::<&str>)?;
         let sep = PredefinedMenuItem::separator(app)?;
         let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
         let menu = Menu::with_items(app, &[&open_i, &scan_i, &widget_i, &sep, &quit_i])?;
 
-        TrayIconBuilder::with_id("aether-tray")
+        TrayIconBuilder::with_id("blackdemon-tray")
             .icon(app.default_window_icon().unwrap().clone())
-            .tooltip("AetherAV - Protected")
+            .tooltip("BlackDemonAV - Protected")
             .menu(&menu)
             .on_menu_event(|app, event| match event.id.as_ref() {
                 "open" => show_main(app),
@@ -1694,7 +1694,7 @@ pub fn run() {
             return;
         }
         let _ = WebviewWindowBuilder::new(app, "widget", WebviewUrl::App("widget.html".into()))
-            .title("AetherAV")
+            .title("BlackDemonAV")
             .inner_size(280.0, 196.0)
             .resizable(false)
             .decorations(false)
@@ -1718,7 +1718,7 @@ pub fn run() {
                 let sigs = scanner.as_ref().map(|s| s.signature_count()).unwrap_or(0);
                 *state.scanner.lock().unwrap() = scanner;
                 let _ = hb.emit("engine-ready", json!({"signatures": sigs}));
-                notify(&hb, "AetherAV - Engine ready",
+                notify(&hb, "BlackDemonAV - Engine ready",
                        &format!("{} malware signatures loaded.", fmt_num(sigs as u64)));
             });
 
@@ -1733,7 +1733,7 @@ pub fn run() {
                     let _ = handle.emit("metrics", m);
 
                     // Notify when new connections appear on malware-associated ports.
-                    let flagged = aether_realtime::netmon::connections()
+                    let flagged = blackdemon_realtime::netmon::connections()
                         .iter()
                         .filter(|c| c.flagged().is_some())
                         .count();
@@ -1865,5 +1865,5 @@ pub fn run() {
             set_schedule
         ])
         .run(tauri::generate_context!())
-        .expect("error while running AetherAV desktop");
+        .expect("error while running BlackDemonAV desktop");
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fine-tune the compact (~50M) base into AetherAV's on-device detection engine.
+"""Fine-tune the compact (~50M) base into BlackDemonAV's on-device detection engine.
 
 Run with the Unsloth Studio venv python:
   /home/nexland/.unsloth/studio/unsloth_studio/bin/python tools/train_av_llm.py
@@ -11,8 +11,8 @@ loads at assets/models/aegis-50m.gguf.
 """
 import json, os, random, sys
 
-ROOT = "/home/nexland/AetherAV"
-OUT_GGUF_DIR = f"{ROOT}/assets/models/aether-llm"
+ROOT = "/home/nexland/BlackDemonAV"
+OUT_GGUF_DIR = f"{ROOT}/assets/models/blackdemon-llm"
 BASE = "/tmp/supra-base"  # sanitized local copy (clean tokenizer_config for transformers 4.57)
 MAXSEQ = 1024
 EPOCHS = 3

@@ -19,222 +19,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "aether-anomaly"
-version = "2026.1.0"
-dependencies = [
- "aether-behavior",
- "aether-common",
- "serde",
- "serde_json",
- "tracing",
-]
-
-[[package]]
-name = "aether-behavior"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "petgraph",
- "serde",
- "serde_json",
- "tracing",
-]
-
-[[package]]
-name = "aether-common"
-version = "2026.1.0"
-dependencies = [
- "serde",
- "thiserror 2.0.18",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "aether-config"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "serde",
- "toml 0.8.23",
-]
-
-[[package]]
-name = "aether-core"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "aether-config",
- "aether-intel",
- "aether-llm",
- "aether-ml",
- "aether-parsers",
- "aether-plugins",
- "aether-sandbox",
- "aether-signatures",
- "aether-unpack",
- "memmap2",
- "rayon",
- "tracing",
- "walkdir",
-]
-
-[[package]]
-name = "aether-desktop"
-version = "2026.1.0"
-dependencies = [
- "aether-anomaly",
- "aether-behavior",
- "aether-common",
- "aether-config",
- "aether-core",
- "aether-firewall",
- "aether-intel",
- "aether-quarantine",
- "aether-realtime",
- "aether-sandbox",
- "aether-signatures",
- "aether-unpack",
- "getrandom 0.2.17",
- "hex",
- "serde",
- "serde_json",
- "sysinfo",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-notification",
- "ureq",
-]
-
-[[package]]
-name = "aether-firewall"
-version = "2026.1.0"
-
-[[package]]
-name = "aether-intel"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "ed25519-dalek",
- "hex",
- "serde",
- "serde_json",
- "sha2",
- "tracing",
-]
-
-[[package]]
-name = "aether-llm"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "serde",
- "serde_json",
- "tracing",
- "ureq",
-]
-
-[[package]]
-name = "aether-ml"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "aether-parsers",
- "serde",
- "serde_json",
- "tracing",
-]
-
-[[package]]
-name = "aether-parsers"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "goblin",
- "md-5",
- "tracing",
-]
-
-[[package]]
-name = "aether-plugins"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "serde",
- "serde_json",
- "toml 0.8.23",
- "tracing",
-]
-
-[[package]]
-name = "aether-quarantine"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "chacha20poly1305",
- "getrandom 0.2.17",
- "hex",
- "serde",
- "serde_json",
- "sha2",
- "tracing",
-]
-
-[[package]]
-name = "aether-realtime"
-version = "2026.1.0"
-dependencies = [
- "aether-behavior",
- "aether-common",
- "dns-lookup",
- "libc",
- "notify",
- "tracing",
-]
-
-[[package]]
-name = "aether-sandbox"
-version = "2026.1.0"
-dependencies = [
- "aether-behavior",
- "aether-common",
- "iced-x86",
- "tracing",
-]
-
-[[package]]
-name = "aether-signatures"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "aho-corasick",
- "blake3",
- "hex",
- "md-5",
- "sha1",
- "sha2",
- "tlsh2",
- "tracing",
- "walkdir",
- "yara-x",
-]
-
-[[package]]
-name = "aether-unpack"
-version = "2026.1.0"
-dependencies = [
- "aether-common",
- "flate2",
- "sevenz-rust",
- "tar",
- "tempfile",
- "tracing",
- "walkdir",
- "zip",
-]
-
-[[package]]
 name = "ahash"
 version = "0.8.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -653,6 +437,222 @@ dependencies = [
  "radium",
  "tap",
  "wyz",
+]
+
+[[package]]
+name = "blackdemon-anomaly"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-behavior",
+ "blackdemon-common",
+ "serde",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-behavior"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "petgraph",
+ "serde",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-common"
+version = "2026.1.0"
+dependencies = [
+ "serde",
+ "thiserror 2.0.18",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "blackdemon-config"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "serde",
+ "toml 0.8.23",
+]
+
+[[package]]
+name = "blackdemon-core"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "blackdemon-config",
+ "blackdemon-intel",
+ "blackdemon-llm",
+ "blackdemon-ml",
+ "blackdemon-parsers",
+ "blackdemon-plugins",
+ "blackdemon-sandbox",
+ "blackdemon-signatures",
+ "blackdemon-unpack",
+ "memmap2",
+ "rayon",
+ "tracing",
+ "walkdir",
+]
+
+[[package]]
+name = "blackdemon-desktop"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-anomaly",
+ "blackdemon-behavior",
+ "blackdemon-common",
+ "blackdemon-config",
+ "blackdemon-core",
+ "blackdemon-firewall",
+ "blackdemon-intel",
+ "blackdemon-quarantine",
+ "blackdemon-realtime",
+ "blackdemon-sandbox",
+ "blackdemon-signatures",
+ "blackdemon-unpack",
+ "getrandom 0.2.17",
+ "hex",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-notification",
+ "ureq",
+]
+
+[[package]]
+name = "blackdemon-firewall"
+version = "2026.1.0"
+
+[[package]]
+name = "blackdemon-intel"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "ed25519-dalek",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-llm"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "serde",
+ "serde_json",
+ "tracing",
+ "ureq",
+]
+
+[[package]]
+name = "blackdemon-ml"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "blackdemon-parsers",
+ "serde",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-parsers"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "goblin",
+ "md-5",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-plugins"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "serde",
+ "serde_json",
+ "toml 0.8.23",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-quarantine"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "chacha20poly1305",
+ "getrandom 0.2.17",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-realtime"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-behavior",
+ "blackdemon-common",
+ "dns-lookup",
+ "libc",
+ "notify",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-sandbox"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-behavior",
+ "blackdemon-common",
+ "iced-x86",
+ "tracing",
+]
+
+[[package]]
+name = "blackdemon-signatures"
+version = "2026.1.0"
+dependencies = [
+ "aho-corasick",
+ "blackdemon-common",
+ "blake3",
+ "hex",
+ "md-5",
+ "sha1",
+ "sha2",
+ "tlsh2",
+ "tracing",
+ "walkdir",
+ "yara-x",
+]
+
+[[package]]
+name = "blackdemon-unpack"
+version = "2026.1.0"
+dependencies = [
+ "blackdemon-common",
+ "flate2",
+ "sevenz-rust",
+ "tar",
+ "tempfile",
+ "tracing",
+ "walkdir",
+ "zip",
 ]
 
 [[package]]

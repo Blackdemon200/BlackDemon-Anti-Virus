@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Launch BlackDemon AV desktop with a sanitized environment.
 #
 # Snap-packaged apps (notably the VS Code snap and its integrated terminal)
@@ -11,8 +11,8 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BIN="$DIR/src-tauri/target/release/aether-desktop"
-[ -x "$BIN" ] || BIN="$DIR/src-tauri/target/debug/aether-desktop"
+BIN="$DIR/src-tauri/target/release/blackdemon-desktop"
+[ -x "$BIN" ] || BIN="$DIR/src-tauri/target/debug/blackdemon-desktop"
 
 if [ ! -x "$BIN" ]; then
   echo "binary not found - build it first:  (cd '$DIR/src-tauri' && cargo build)" >&2

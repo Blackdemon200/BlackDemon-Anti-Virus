@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "logistic",
-  "_comment": "Baseline static-PE classifier with domain-seeded weights. Replace with output of tools/train_pe_model.py trained on a labeled corpus. Feature order MUST match aether_ml::features::PE_FEATURES.",
+  "_comment": "Baseline static-PE classifier with domain-seeded weights. Replace with output of tools/train_pe_model.py trained on a labeled corpus. Feature order MUST match blackdemon_ml::features::PE_FEATURES.",
   "features": [
     "section_count",
     "max_entropy",

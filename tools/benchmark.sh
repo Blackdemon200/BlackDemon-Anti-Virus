@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # BlackDemon AV detection benchmark -> a methodology-compliant, publishable report.
 #
 # Produces dist/benchmark-report.md with the confusion matrix + metrics AND the
@@ -17,8 +17,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-AETHER="$(ls target/release/aether 2>/dev/null || ls target/debug/aether 2>/dev/null || true)"
-[ -n "$AETHER" ] || { echo "build first: cargo build --release -p aether-cli"; exit 1; }
+BLACKDEMON="$(ls target/release/blackdemon 2>/dev/null || ls target/debug/blackdemon 2>/dev/null || true)"
+[ -n "$BLACKDEMON" ] || { echo "build first: cargo build --release -p blackdemon-cli"; exit 1; }
 
 MAL=""; CLEAN=""; NAME=""
 while [ $# -gt 0 ]; do case "$1" in
@@ -49,7 +49,7 @@ fi
 NC=$(find "$CLEAN" -type f | wc -l)
 NM=$(find "$MAL" -type f | wc -l)
 DATE="$(date -u +%Y-%m-%d)"
-EVAL="$("$AETHER" eval --clean "$CLEAN" --malware "$MAL" 2>/dev/null)"
+EVAL="$("$BLACKDEMON" eval --clean "$CLEAN" --malware "$MAL" 2>/dev/null)"
 
 mkdir -p dist
 REPORT="dist/benchmark-report.md"
@@ -58,11 +58,11 @@ cat > "$REPORT" <<MD
 
 | Field | Value |
 |-------|-------|
-| Engine | $("$AETHER" --version 2>/dev/null | head -1) |
+| Engine | $("$BLACKDEMON" --version 2>/dev/null | head -1) |
 | Date (UTC) | $DATE |
 | Malware set | $NAME ($NM files) |
 | Benign set | $CLEAN ($NC files) |
-| Signatures | $("$AETHER" vt-scan --engine-version /dev/null 2>/dev/null) |
+| Signatures | $("$BLACKDEMON" vt-scan --engine-version /dev/null 2>/dev/null) |
 
 ## Results
 \`\`\`

@@ -21,7 +21,7 @@ OUTFILE = os.path.join(OUTDIR, f"yara-forge-{LEVEL}.yar")
 
 def main():
     print(f"downloading YARA-Forge '{LEVEL}' from {URL} ...", file=sys.stderr)
-    req = urllib.request.Request(URL, headers={"User-Agent": "AetherAV/1.0"})
+    req = urllib.request.Request(URL, headers={"User-Agent": "BlackDemonAV/1.0"})
     try:
         data = urllib.request.urlopen(req, timeout=180).read()
     except Exception as e:

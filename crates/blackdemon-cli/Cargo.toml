@@ -1,0 +1,39 @@
+[package]
+name = "blackdemon-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "BlackDemon AV command-line interface."
+
+[[bin]]
+name = "blackdemon"
+path = "src/main.rs"
+
+[features]
+default = ["yara"]
+yara = ["blackdemon-core/yara"]
+# Live DNS-query sniffing (`blackdemon dnswatch`); needs libpcap + capture privileges.
+pcap = ["blackdemon-realtime/pcap"]
+
+[dependencies]
+blackdemon-common = { workspace = true }
+blackdemon-config = { workspace = true }
+blackdemon-core = { workspace = true }
+blackdemon-signatures = { workspace = true }
+blackdemon-behavior = { workspace = true }
+blackdemon-sandbox = { workspace = true }
+blackdemon-anomaly = { workspace = true }
+blackdemon-realtime = { workspace = true }
+blackdemon-firewall = { workspace = true }
+blackdemon-quarantine = { workspace = true }
+blackdemon-intel = { workspace = true }
+blackdemon-daemon = { workspace = true }
+clap = { workspace = true }
+anyhow = { workspace = true }
+hex = { workspace = true }
+tracing = { workspace = true }
+ureq = { workspace = true }
+serde_json = { workspace = true }
+blackdemon-parsers.workspace = true
+

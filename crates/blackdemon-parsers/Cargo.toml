@@ -1,0 +1,14 @@
+[package]
+name = "blackdemon-parsers"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Universal file-format parsers (PE first) for BlackDemon AV."
+
+[dependencies]
+blackdemon-common = { workspace = true }
+goblin = { workspace = true }
+md-5.workspace = true
+tracing = { workspace = true }
+

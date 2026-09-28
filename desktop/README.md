@@ -1,4 +1,4 @@
-﻿# BlackDemon AV Desktop (Tauri v2)
+# BlackDemon AV Desktop (Tauri v2)
 
 A cross-platform desktop GUI for the BlackDemon AV engine - **Windows, macOS and
 Linux** from one codebase. Rust backend (`src-tauri`, a thin shell over the
@@ -21,7 +21,7 @@ desktop/
 
 ## How it connects to the engine
 
-`src-tauri` depends on `aether-core`, `aether-config` and `aether-common`. The
+`src-tauri` depends on `blackdemon-core`, `blackdemon-config` and `blackdemon-common`. The
 `dashboard_data` command feeds the UI (signature count, ML status, …) and
 `run_action("quick")` runs a real `Scanner::scan_path`. The frontend ships an
 identical data fallback, so `ui/index.html` renders the full dashboard even in a
@@ -35,7 +35,7 @@ Prereqgs: Rust, and the platform webview libs (Linux: `webkit2gtk-4.1`,
 ```bash
 # from desktop/src-tauri  (no Tauri CLI required - it's a normal cargo binary)
 cargo run                      # dev run
-cargo build --release          # release binary -> target/release/aether-desktop
+cargo build --release          # release binary -> target/release/blackdemon-desktop
 
 # Optional, with the Tauri CLI for installers (.msi/.dmg/.AppImage/.deb):
 cargo install tauri-cli --version "^2"

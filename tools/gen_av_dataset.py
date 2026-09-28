@@ -149,7 +149,7 @@ def to_record(ex, fmt):
     instr, inp, out = ex
     if fmt == "chat":
         return {"messages": [
-            {"role": "system", "content": "You are AetherAV, a compact on-device malware triage classifier."},
+            {"role": "system", "content": "You are BlackDemonAV, a compact on-device malware triage classifier."},
             {"role": "user", "content": f"{instr}\n{inp}"},
             {"role": "assistant", "content": out}]}
     return {"instruction": instr, "input": inp, "output": out}

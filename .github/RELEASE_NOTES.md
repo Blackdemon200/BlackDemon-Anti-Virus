@@ -1,4 +1,4 @@
-﻿## Install
+## Install
 
 Download the installer for your OS and CPU below.
 
@@ -29,7 +29,7 @@ real-time security service needs **administrator / root** on any OS.
 
 ```bash
 sha256sum -c SHA256SUMS          # bytes match the published hashes
-aether verifyfile SHA256SUMS     # the hash list is Ed25519-signed by us -> TRUSTED
+blackdemon verifyfile SHA256SUMS     # the hash list is Ed25519-signed by us -> TRUSTED
 ```
 
 

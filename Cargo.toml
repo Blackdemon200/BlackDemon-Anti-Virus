@@ -4,24 +4,24 @@ resolver = "2"
 # (heavy / nightly-only deps); keep them out of the engine workspace.
 exclude = ["desktop", "fuzz", "server"]
 members = [
-    "crates/aether-common",
-    "crates/aether-config",
-    "crates/aether-signatures",
-    "crates/aether-parsers",
-    "crates/aether-unpack",
-    "crates/aether-ml",
-    "crates/aether-llm",
-    "crates/aether-behavior",
-    "crates/aether-sandbox",
-    "crates/aether-anomaly",
-    "crates/aether-quarantine",
-    "crates/aether-intel",
-    "crates/aether-plugins",
-    "crates/aether-realtime",
-    "crates/aether-firewall",
-    "crates/aether-core",
-    "crates/aether-daemon",
-    "crates/aether-cli",
+    "crates/blackdemon-common",
+    "crates/blackdemon-config",
+    "crates/blackdemon-signatures",
+    "crates/blackdemon-parsers",
+    "crates/blackdemon-unpack",
+    "crates/blackdemon-ml",
+    "crates/blackdemon-llm",
+    "crates/blackdemon-behavior",
+    "crates/blackdemon-sandbox",
+    "crates/blackdemon-anomaly",
+    "crates/blackdemon-quarantine",
+    "crates/blackdemon-intel",
+    "crates/blackdemon-plugins",
+    "crates/blackdemon-realtime",
+    "crates/blackdemon-firewall",
+    "crates/blackdemon-core",
+    "crates/blackdemon-daemon",
+    "crates/blackdemon-cli",
 ]
 
 # ---------------------------------------------------------------------------
@@ -43,25 +43,25 @@ description = "BlackDemon AV - a modern, modular, open-source antivirus engine w
 [workspace.dependencies]
 # Internal crates. The two engine-bearing crates default their features OFF at
 # the workspace level; the YARA-X engine is re-enabled through the explicit
-# feature chain (aether-cli/yara -> aether-core/yara -> aether-signatures/yara),
+# feature chain (blackdemon-cli/yara -> blackdemon-core/yara -> blackdemon-signatures/yara),
 # so `cargo build` is full-featured and `--no-default-features` drops YARA-X.
-aether-common = { path = "crates/aether-common" }
-aether-config = { path = "crates/aether-config" }
-aether-signatures = { path = "crates/aether-signatures", default-features = false }
-aether-parsers = { path = "crates/aether-parsers" }
-aether-unpack = { path = "crates/aether-unpack" }
-aether-ml = { path = "crates/aether-ml" }
-aether-llm = { path = "crates/aether-llm" }
-aether-behavior = { path = "crates/aether-behavior" }
-aether-sandbox = { path = "crates/aether-sandbox" }
-aether-anomaly = { path = "crates/aether-anomaly" }
-aether-quarantine = { path = "crates/aether-quarantine" }
-aether-intel = { path = "crates/aether-intel" }
-aether-plugins = { path = "crates/aether-plugins" }
-aether-realtime = { path = "crates/aether-realtime" }
-aether-firewall = { path = "crates/aether-firewall" }
-aether-daemon = { path = "crates/aether-daemon" }
-aether-core = { path = "crates/aether-core", default-features = false }
+blackdemon-common = { path = "crates/blackdemon-common" }
+blackdemon-config = { path = "crates/blackdemon-config" }
+blackdemon-signatures = { path = "crates/blackdemon-signatures", default-features = false }
+blackdemon-parsers = { path = "crates/blackdemon-parsers" }
+blackdemon-unpack = { path = "crates/blackdemon-unpack" }
+blackdemon-ml = { path = "crates/blackdemon-ml" }
+blackdemon-llm = { path = "crates/blackdemon-llm" }
+blackdemon-behavior = { path = "crates/blackdemon-behavior" }
+blackdemon-sandbox = { path = "crates/blackdemon-sandbox" }
+blackdemon-anomaly = { path = "crates/blackdemon-anomaly" }
+blackdemon-quarantine = { path = "crates/blackdemon-quarantine" }
+blackdemon-intel = { path = "crates/blackdemon-intel" }
+blackdemon-plugins = { path = "crates/blackdemon-plugins" }
+blackdemon-realtime = { path = "crates/blackdemon-realtime" }
+blackdemon-firewall = { path = "crates/blackdemon-firewall" }
+blackdemon-daemon = { path = "crates/blackdemon-daemon" }
+blackdemon-core = { path = "crates/blackdemon-core", default-features = false }
 
 # CLI / config
 clap = { version = "4.5", features = ["derive", "env"] }

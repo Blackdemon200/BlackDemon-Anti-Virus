@@ -1,6 +1,6 @@
 # Verifying a BlackDemon AV download
 
-Every release ships three files: the `aether` binary, `SHA256SUMS`, and
+Every release ships three files: the `blackdemon` binary, `SHA256SUMS`, and
 `SHA256SUMS.sig` (an Ed25519 signature made with our **offline** key). This lets
 you prove a download is genuine and untampered - even if the mirror/CDN you got
 it from is compromised.
@@ -9,10 +9,10 @@ it from is compromised.
 
 ```bash
 # 1) the binary matches the published hash
-sha256sum -c SHA256SUMS        # must print: aether: OK
+sha256sum -c SHA256SUMS        # must print: blackdemon: OK
 
 # 2) the hash list itself is signed by the official offline key
-aether verifyfile SHA256SUMS   # must print: ✓ TRUSTED
+blackdemon verifyfile SHA256SUMS   # must print: ✓ TRUSTED
 ```
 
 `verifyfile` checks `SHA256SUMS.sig` against the public key **compiled into the

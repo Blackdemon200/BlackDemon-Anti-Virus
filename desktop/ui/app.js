@@ -318,12 +318,12 @@ const PAGES = {
       <div id="webInfo" class="muted"></div></div>
     <div class="panel"><div class="panel-h-row"><span class="panel-h">STEALER & WALLET SHIELD</span>
       <button class="btn btn-primary inline" id="stArm"><i data-ic="fingerprint"></i> Arm decoys</button></div>
-      <div class="page-sub" style="margin:6px 0">Plants decoy wallet/credential files; any process that reads one is an infostealer. For live blocking run <code>aether stealerguard &lt;dir&gt; --watch --kill</code> (root).</div>
+      <div class="page-sub" style="margin:6px 0">Plants decoy wallet/credential files; any process that reads one is an infostealer. For live blocking run <code>blackdemon stealerguard &lt;dir&gt; --watch --kill</code> (root).</div>
       <div id="stInfo" class="muted"></div></div>
     <div class="panel"><div class="panel-h">CLIPBOARD GUARD <span class="muted">(crypto clippers)</span></div>
       <ul class="feature-list" style="margin-top:10px">
         <li><i data-ic="check"></i>Detects when a copied wallet address is swapped by a clipboard hijacker</li>
-        <li><i data-ic="check"></i>Run <code>aether clipguard --watch --restore</code> to monitor and auto-restore the original address</li>
+        <li><i data-ic="check"></i>Run <code>blackdemon clipguard --watch --restore</code> to monitor and auto-restore the original address</li>
       </ul></div>`,
   network: ()=>`
     <div class="page-head"><div><div class="page-title"><i data-ic="wifi"></i>Network Monitor</div>
@@ -336,7 +336,7 @@ const PAGES = {
     <div class="panel"><div class="panel-h">OUTBOUND DNS MONITOR</div>
       <ul class="feature-list" style="margin-top:10px">
         <li><i data-ic="check"></i><span id="dnsDomains">Domain IOCs loaded</span> - lookups of these are flagged before a connection is made</li>
-        <li><i data-ic="check"></i>Enable live capture: <code>cargo build -p aether-cli --features pcap</code> then <code>sudo aether dnswatch</code> (needs libpcap + CAP_NET_RAW)</li>
+        <li><i data-ic="check"></i>Enable live capture: <code>cargo build -p blackdemon-cli --features pcap</code> then <code>sudo blackdemon dnswatch</code> (needs libpcap + CAP_NET_RAW)</li>
       </ul></div>
     <div class="panel"><div class="panel-h">ACTIVE CONNECTIONS</div><div id="netConns" style="margin-top:10px"></div></div>`,
   quarantine: ()=>`

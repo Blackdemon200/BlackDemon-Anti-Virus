@@ -1,4 +1,4 @@
-﻿# VirusTotal contributor integration
+# VirusTotal contributor integration
 
 This package lets BlackDemon AV run as a scanner engine inside VirusTotal (so a
 "BlackDemon AV" verdict appears alongside the other engines on every uploaded file).
@@ -31,8 +31,8 @@ data to a third party and break our local-first, no-telemetry promise.
 
 ## Local test
 ```bash
-cargo build --release -p aether-cli
-export AETHER_BIN=target/release/aether
+cargo build --release -p blackdemon-cli
+export BLACKDEMON_BIN=target/release/blackdemon
 printf 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /tmp/eicar.com
 tools/vt-integration/BlackDemon AV-vt-scanner.sh /tmp/eicar.com   # -> Test.EICAR  (exit 1)
 tools/vt-integration/BlackDemon AV-vt-scanner.sh --version

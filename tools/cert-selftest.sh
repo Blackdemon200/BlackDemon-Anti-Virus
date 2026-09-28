@@ -1,8 +1,8 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # BlackDemon AV certification self-test.
 #
 # Produces a reproducible detection/false-positive report (the kind of evidence
-# AV-Comparatives / AV-TEST / VirusTotal want) using our own `aether eval`
+# AV-Comparatives / AV-TEST / VirusTotal want) using our own `blackdemon eval`
 # harness against a clean corpus and a malware corpus. Safe: the only "malware"
 # generated here is the standard EICAR test file (harmless by design).
 #
@@ -10,8 +10,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-AETHER="$(ls target/release/aether 2>/dev/null || ls target/debug/aether 2>/dev/null || true)"
-[ -n "$AETHER" ] || { echo "build first: cargo build --release -p aether-cli"; exit 1; }
+BLACKDEMON="$(ls target/release/blackdemon 2>/dev/null || ls target/debug/blackdemon 2>/dev/null || true)"
+[ -n "$BLACKDEMON" ] || { echo "build first: cargo build --release -p blackdemon-cli"; exit 1; }
 
 WORK="$(mktemp -d)"
 CLEAN="${1:-$WORK/clean}"
@@ -42,11 +42,11 @@ REPORT="dist/cert-report.txt"
 {
   echo "BlackDemon AV detection self-test"
   echo "============================"
-  echo "engine:  $($AETHER --version 2>/dev/null | head -1)"
+  echo "engine:  $($BLACKDEMON --version 2>/dev/null | head -1)"
   echo "clean:   $CLEAN  ($(find "$CLEAN" -type f | wc -l) files)"
   echo "malware: $MAL  ($(find "$MAL" -type f | wc -l) files)"
   echo
-  "$AETHER" eval --clean "$CLEAN" --malware "$MAL"
+  "$BLACKDEMON" eval --clean "$CLEAN" --malware "$MAL"
 } | tee "$REPORT"
 
 rm -rf "$WORK"

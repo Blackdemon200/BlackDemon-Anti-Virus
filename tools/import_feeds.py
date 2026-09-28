@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Import extra FREE, no-key, redistributable threat feeds into the AetherAV
+"""Import extra FREE, no-key, redistributable threat feeds into the BlackDemonAV
 intel store - more malicious IPs/domains on top of the abuse.ch + ClamAV data.
 
   python3 tools/import_feeds.py
@@ -10,15 +10,15 @@ For MILLIONS more malware hashes, also set a free abuse.ch key and run:
 """
 import json, os, subprocess, sys, tempfile, urllib.request
 
-AETHER = os.environ.get("AETHER_BIN")
-for cand in ([AETHER] if AETHER else []) + ["target/release/aether", "target/debug/aether"]:
+BLACKDEMON = os.environ.get("BLACKDEMON_BIN")
+for cand in ([BLACKDEMON] if BLACKDEMON else []) + ["target/release/blackdemon", "target/debug/blackdemon"]:
     if cand and os.path.exists(cand):
-        AETHER = cand
+        BLACKDEMON = cand
         break
 else:
-    sys.exit("build the engine first: cargo build --release -p aether-cli")
+    sys.exit("build the engine first: cargo build --release -p blackdemon-cli")
 
-STORE = os.environ.get("AETHER_INTEL", "assets/models/intel.json")
+STORE = os.environ.get("BLACKDEMON_INTEL", "assets/models/intel.json")
 
 # (name, format, url) - all free, no key, redistributable threat lists.
 FEEDS = [
@@ -38,7 +38,7 @@ FEEDS = [
     ("digitalside-hash", "sha256",     "https://osint.digitalside.it/Threat-Intel/lists/latesthashes.txt"),
 ]
 
-ua = {"User-Agent": "AetherAV-feeds/1.0"}
+ua = {"User-Agent": "BlackDemonAV-feeds/1.0"}
 for name, fmt, url in FEEDS:
     try:
         req = urllib.request.Request(url, headers=ua)
@@ -66,7 +66,7 @@ for name, fmt, url in FEEDS:
     # Use the run's shared version so delta computation stays consistent.
     ver = os.environ.get("FEED_VERSION", "1")
     r = subprocess.run(
-        [AETHER, "intel", "import", path, "--format", fmt, "--threat", name,
+        [BLACKDEMON, "intel", "import", path, "--format", fmt, "--threat", name,
          "--store", STORE, "--feed-version", ver],
         capture_output=True, text=True)
     os.unlink(path)

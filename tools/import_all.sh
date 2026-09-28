@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Pull ALL the free detection content BlackDemon AV can use, in one command.
 #   ./tools/import_all.sh
 # Knobs:

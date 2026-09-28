@@ -1,0 +1,18 @@
+[package]
+name = "blackdemon-daemon"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "BlackDemon AV daemon: a minimal HTTP/JSON API over the engine."
+
+[dependencies]
+blackdemon-common = { workspace = true }
+blackdemon-core = { workspace = true }
+blackdemon-behavior = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+blackdemon-config = { workspace = true }
+

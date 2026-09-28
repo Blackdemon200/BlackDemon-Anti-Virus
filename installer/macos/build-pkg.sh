@@ -3,7 +3,7 @@
 #
 # Optional signing/notarization (set these to ship a trusted, Gatekeeper-clean pkg):
 #   MAC_INSTALLER_IDENTITY="Developer ID Installer: Your Name (TEAMID)"
-#   MAC_NOTARY_PROFILE="aether-notary"   # a stored notarytool keychain profile
+#   MAC_NOTARY_PROFILE="blackdemon-notary"   # a stored notarytool keychain profile
 set -euo pipefail
 cd "$(dirname "$0")/../.."   # repo root
 
@@ -14,15 +14,15 @@ rm -rf "$B"; mkdir -p "$B" dist
 
 echo ">> building universal (arm64 + x86_64) CLI"
 rustup target add aarch64-apple-darwin x86_64-apple-darwin >/dev/null 2>&1 || true
-cargo build --release -p aether-cli --target aarch64-apple-darwin
-cargo build --release -p aether-cli --target x86_64-apple-darwin
-lipo -create -output "$B/aether" \
-  target/aarch64-apple-darwin/release/aether \
-  target/x86_64-apple-darwin/release/aether
+cargo build --release -p blackdemon-cli --target aarch64-apple-darwin
+cargo build --release -p blackdemon-cli --target x86_64-apple-darwin
+lipo -create -output "$B/blackdemon" \
+  target/aarch64-apple-darwin/release/blackdemon \
+  target/x86_64-apple-darwin/release/blackdemon
 
 # ---- CLI component -> /usr/local/bin ----
 mkdir -p "$B/root_cli/usr/local/bin"
-cp "$B/aether" "$B/root_cli/usr/local/bin/aether"
+cp "$B/blackdemon" "$B/root_cli/usr/local/bin/blackdemon"
 pkgbuild --root "$B/root_cli" --identifier org.blackdemonav.cli --version "$VER" \
   --install-location / "$B/cli.pkg"
 
@@ -35,8 +35,8 @@ else
   echo ">> (no Tauri .app found; wrapping the desktop binary into a minimal bundle)"
   APP="$B/root_app/Applications/BlackDemon AV.app"
   mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources/assets"
-  cp target/*/release/aether-desktop "$APP/Contents/MacOS/BlackDemon AV" 2>/dev/null || \
-    cp "$B/aether" "$APP/Contents/MacOS/BlackDemon AV"
+  cp target/*/release/blackdemon-desktop "$APP/Contents/MacOS/BlackDemon AV" 2>/dev/null || \
+    cp "$B/blackdemon" "$APP/Contents/MacOS/BlackDemon AV"
   cp -R assets/. "$APP/Contents/Resources/assets/" 2>/dev/null || true
   cp installer/windows/assets/BlackDemonAV.ico "$APP/Contents/Resources/BlackDemon AV.icns" 2>/dev/null || true
   cat > "$APP/Contents/Info.plist" <<PL
@@ -57,7 +57,7 @@ pkgbuild --root "$B/root_app" --identifier org.blackdemonav.app --version "$VER"
 
 # ---- Real-time component -> LaunchDaemon ----
 mkdir -p "$B/root_rt/Library/LaunchDaemons"
-cp installer/macos/com.aetherav.realtime.plist \
+cp installer/macos/com.blackdemonav.realtime.plist \
   "$B/root_rt/Library/LaunchDaemons/org.blackdemonav.realtime.plist"
 pkgbuild --root "$B/root_rt" --identifier org.blackdemonav.realtime --version "$VER" \
   --scripts installer/macos/scripts --install-location / "$B/realtime.pkg"

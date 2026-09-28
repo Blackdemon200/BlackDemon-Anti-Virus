@@ -1,0 +1,22 @@
+﻿# Real-time on-access protection (Linux, systemd).
+#   sudo cp packaging/systemd/blackdemon-watch.service /etc/systemd/system/
+#   sudo systemctl enable --now blackdemon-watch
+[Unit]
+Description=BlackDemonAV real-time on-access protection
+After=network.target
+
+[Service]
+Type=simple
+# Adjust the path to the installed binary and the directory(ies) to protect.
+ExecStart=/usr/local/bin/blackdemon watch /home --quarantine /var/lib/blackdemon/quarantine
+WorkingDirectory=/usr/local/share/blackdemon
+Restart=on-failure
+RestartSec=5
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/blackdemon
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

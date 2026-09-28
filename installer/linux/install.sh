@@ -27,7 +27,7 @@ C_CY=$'\033[36m'; C_GR=$'\033[32m'; C_DIM=$'\033[2m'; C_B=$'\033[1m'; C_R=$'\033
 
 SHARE="$PREFIX/share/blackdemonav"
 BINDIR="$PREFIX/bin"
-CONFIG="/etc/blackdemonav/aether.toml"
+CONFIG="/etc/blackdemonav/blackdemon.toml"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 banner() {
@@ -58,7 +58,7 @@ ask() { # ask "question" default(y/n) -> returns 0 for yes
 }
 
 find_bin() {
-  for c in "$HERE/aether" "$HERE/../../target/release/aether" "$HERE/../../target/debug/aether"; do
+  for c in "$HERE/blackdemon" "$HERE/../../target/release/blackdemon" "$HERE/../../target/debug/blackdemon"; do
     [ -x "$c" ] && { echo "$c"; return; }
   done
 }
@@ -76,7 +76,7 @@ if [ "$UNINSTALL" = "1" ]; then
   systemctl disable --now blackdemonav-update.timer 2>/dev/null || true
   rm -f /etc/systemd/system/blackdemonav-realtime.service /etc/systemd/system/blackdemonav-update.service /etc/systemd/system/blackdemonav-update.timer
   systemctl daemon-reload 2>/dev/null || true
-  rm -f "$BINDIR/aether" "$BINDIR/aether-desktop"
+  rm -f "$BINDIR/blackdemon" "$BINDIR/blackdemon-desktop"
   rm -rf "$SHARE"
   echo "  ${C_GR}BlackDemon AV removed.${C_R} (config at /etc/blackdemonav kept; delete manually if desired.)"
   exit 0
@@ -85,7 +85,7 @@ fi
 # ---- install ----
 banner
 BIN="$(find_bin)"; ASSETS="$(find_assets)"
-[ -n "$BIN" ] || { echo "  Could not find the 'aether' binary. Build it: cargo build --release -p aether-cli"; exit 1; }
+[ -n "$BIN" ] || { echo "  Could not find the 'blackdemon' binary. Build it: cargo build --release -p blackdemon-cli"; exit 1; }
 echo "  Engine binary : ${C_CY}$BIN${C_R}"
 echo "  Assets        : ${C_CY}${ASSETS:-<none found>}${C_R}"
 echo "  Install prefix: ${C_CY}$PREFIX${C_R}"
@@ -113,13 +113,13 @@ ROOT=0; [ "$(id -u)" = "0" ] && ROOT=1
 echo "${C_B}  Select components${C_R}"
 ask "Install real-time on-access protection (background service)?" y && DO_RT=1 || DO_RT=0
 ask "Enable automatic signed signature updates (hourly)?" y && DO_UPDATE=1 || DO_UPDATE=0
-[ "$DO_DESKTOP" = "1" ] && [ -x "$HERE/aether-desktop" ] && { ask "Install the desktop app?" y && DO_DESKTOP=1 || DO_DESKTOP=0; } || DO_DESKTOP=0
+[ "$DO_DESKTOP" = "1" ] && [ -x "$HERE/blackdemon-desktop" ] && { ask "Install the desktop app?" y && DO_DESKTOP=1 || DO_DESKTOP=0; } || DO_DESKTOP=0
 echo
 
 # 1) binary + assets
 echo "  Installing engine to $BINDIR ..."
-install -Dm755 "$BIN" "$BINDIR/aether"
-[ "$DO_DESKTOP" = "1" ] && install -Dm755 "$HERE/aether-desktop" "$BINDIR/aether-desktop"
+install -Dm755 "$BIN" "$BINDIR/blackdemon"
+[ "$DO_DESKTOP" = "1" ] && install -Dm755 "$HERE/blackdemon-desktop" "$BINDIR/blackdemon-desktop"
 if [ -n "$ASSETS" ]; then
   mkdir -p "$SHARE"
   cp -r "$ASSETS"/. "$SHARE/"
@@ -128,14 +128,14 @@ fi
 # 2) config (system location; needs root)
 if [ "$ROOT" = "1" ] && [ ! -f "$CONFIG" ]; then
   mkdir -p /etc/blackdemonav
-  "$BINDIR/aether" config init --output "$CONFIG" >/dev/null 2>&1 || true
+  "$BINDIR/blackdemon" config init --output "$CONFIG" >/dev/null 2>&1 || true
   echo "  Wrote default config: $CONFIG"
 fi
 
 # 3) capabilities so real-time works without full root each run
 if [ "$DO_CAPS" = "1" ] && [ "$ROOT" = "1" ] && command -v setcap >/dev/null 2>&1; then
-  setcap 'cap_sys_admin,cap_net_admin,cap_dac_read_search+ep' "$BINDIR/aether" 2>/dev/null \
-    && echo "  Granted fanotify/firewall capabilities to aether" \
+  setcap 'cap_sys_admin,cap_net_admin,cap_dac_read_search+ep' "$BINDIR/blackdemon" 2>/dev/null \
+    && echo "  Granted fanotify/firewall capabilities to blackdemon" \
     || echo "  ${C_DIM}(could not set capabilities; real-time may need sudo)${C_R}"
 fi
 
@@ -148,7 +148,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=$BINDIR/aether -c $CONFIG protect /home --quarantine /var/lib/blackdemonav/quarantine
+ExecStart=$BINDIR/blackdemon -c $CONFIG protect /home --quarantine /var/lib/blackdemonav/quarantine
 Restart=on-failure
 Nice=5
 
@@ -168,7 +168,7 @@ if [ "$DO_UPDATE" = "1" ] && [ "$ROOT" = "1" ]; then
 Description=BlackDemon AV signed signature update
 [Service]
 Type=oneshot
-ExecStart=$BINDIR/aether -c $CONFIG update
+ExecStart=$BINDIR/blackdemon -c $CONFIG update
 EOF
   cat > /etc/systemd/system/blackdemonav-update.timer <<EOF
 [Unit]
@@ -187,8 +187,8 @@ fi
 
 echo
 echo "  ${C_GR}${C_B}BlackDemon AV installed.${C_R}"
-echo "  Try:  ${C_CY}aether scan ~/Downloads${C_R}"
-echo "  GUI:  ${C_CY}aether-desktop${C_R}"
+echo "  Try:  ${C_CY}blackdemon scan ~/Downloads${C_R}"
+echo "  GUI:  ${C_CY}blackdemon-desktop${C_R}"
 [ "$DO_RT" = "1" ] && echo "  Real-time: ${C_CY}systemctl status blackdemonav-realtime${C_R}"
 echo "  Remove:   ${C_CY}sudo $0 --uninstall${C_R}"
 

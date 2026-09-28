@@ -21,7 +21,7 @@ or evade every detection layer.
   sandbox, behavioral, memory, on-access and reputation layers.
 - **Frequent content updates.** Signatures/IOCs move constantly, so a static
   evasion studied today is stale tomorrow. Some detection is server-side.
-- **Tamper detection.** `aether selfcheck` (integrity manifest) and process
+- **Tamper detection.** `blackdemon selfcheck` (integrity manifest) and process
   self-protection (`PR_SET_DUMPABLE=0`) detect/raise the cost of tampering.
 
 ## Reporting a vulnerability

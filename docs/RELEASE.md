@@ -1,4 +1,4 @@
-﻿# Releasing BlackDemon AV (signed installers, all platforms)
+# Releasing BlackDemon AV (signed installers, all platforms)
 
 BlackDemon AV ships a premium installer for each OS. The detection content (feed +
 model) is already Ed25519-signed; for *distribution* trust you additionally want
@@ -16,7 +16,7 @@ Needs: Rust, NSIS (`choco install nsis`).
 ```powershell
 ./installer/windows/build.ps1
 ```
-Builds `aether.exe` + `aether-desktop.exe`, stages `installer/windows/payload/`,
+Builds `blackdemon.exe` + `blackdemon-desktop.exe`, stages `installer/windows/payload/`,
 runs `makensis BlackDemon AV.nsi`. The wizard has: Welcome (branded) -> License (EULA)
 -> Components (App / CLI+PATH / Real-Time Protection / shortcuts / context menu)
 -> Directory -> Install -> Finish. Real-Time registers a logon scheduled task
@@ -42,7 +42,7 @@ sudo ./installer/linux/install.sh          # or the interactive installer
 | `WIN_CERT_PFX_PATH` / `WIN_CERT_PASS` | Authenticode signing of the Windows binaries + installer (signtool). |
 | `MAC_INSTALLER_IDENTITY` | "Developer ID Installer: ..." for `productsign`. |
 | `MAC_NOTARY_PROFILE` | Stored `notarytool` profile for notarization + stapling. |
-| `AETHER_FEED_PRIVATE_KEY` | Offline Ed25519 key to sign `SHA256SUMS` (keep this OUT of CI if you prefer to sign on the air-gapped signer instead). |
+| `BLACKDEMON_FEED_PRIVATE_KEY` | Offline Ed25519 key to sign `SHA256SUMS` (keep this OUT of CI if you prefer to sign on the air-gapped signer instead). |
 
 Without these, the build still produces working (unsigned) installers - good for
 internal testing, but end users will see OS trust warnings until signed.
@@ -51,7 +51,7 @@ internal testing, but end users will see OS trust warnings until signed.
 The on-access watcher is cross-platform (file events via `notify` =
 inotify / FSEvents / ReadDirectoryChanges) and is auto-started by each installer
 (scheduled task on Windows, LaunchDaemon on macOS, systemd service on Linux).
-True kernel pre-execution blocking exists today on Linux (fanotify, `aether
+True kernel pre-execution blocking exists today on Linux (fanotify, `blackdemon
 protect`); a Windows minifilter / macOS EndpointSecurity driver is future work
 (needs a signed kernel/system extension).
 

@@ -1,4 +1,4 @@
-﻿# BlackDemon AV fuzzing
+# BlackDemon AV fuzzing
 
 Coverage-guided fuzzing of the security-critical parsers - the #1 attack surface
 of any scanner (a crash on attacker-controlled input is a vulnerability).
@@ -6,7 +6,7 @@ of any scanner (a crash on attacker-controlled input is a vulnerability).
 Two layers:
 
 1. **Always-on robustness tests** (run under stable `cargo test`): each of
-   `aether-parsers`, `aether-unpack` and `aether-core` has a
+   `blackdemon-parsers`, `blackdemon-unpack` and `blackdemon-core` has a
    `*_never_panic_on_hostile_input` test that throws thousands of random /
    magic-prefixed buffers at every parser and the full scan pipeline. These run
    in CI today and catch regressions without a nightly toolchain.

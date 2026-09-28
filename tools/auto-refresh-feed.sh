@@ -3,7 +3,7 @@
 #   1. pull fresh intel from every free source (abuse.ch ThreatFox/Bazaar/URLhaus/
 #      Feodo + the IP/domain feeds), folding it into the local intel store and
 #      rebuilding assets/signatures/hashes.db,
-#   2. sign the feed with the offline Ed25519 key and stage dist-feed/aether.json,
+#   2. sign the feed with the offline Ed25519 key and stage dist-feed/blackdemon.json,
 #   3. the running server serves that file straight away (it reads it per request),
 #      so clients pulling /feed - or pressing "Update" - get the new indicators.
 #
@@ -27,4 +27,4 @@ log "signing + publishing the feed (offline key)…"
 ./tools/publish-feed.sh         || { log "ERROR: publish failed"; exit 1; }
 
 sigs=$(grep -cvE '^\s*(#|$)' assets/signatures/hashes.db 2>/dev/null || echo '?')
-log "done · $(ls -lh dist-feed/aether.json 2>/dev/null | awk '{print $5}') feed · ${sigs} hash signatures live"
+log "done · $(ls -lh dist-feed/blackdemon.json 2>/dev/null | awk '{print $5}') feed · ${sigs} hash signatures live"

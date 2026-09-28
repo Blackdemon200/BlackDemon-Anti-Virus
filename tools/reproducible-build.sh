@@ -17,8 +17,8 @@ export LC_ALL=C TZ=UTC
 
 echo ">> toolchain: $(rustc --version)"
 echo ">> SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
-cargo build --release --locked -p aether-cli
+cargo build --release --locked -p blackdemon-cli
 
 echo ">> reproducible build hash:"
-sha256sum target/release/aether
+sha256sum target/release/blackdemon
 echo ">> rebuild on a matching toolchain and compare this hash to the published SHA256SUMS."

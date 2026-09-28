@@ -1,0 +1,17 @@
+﻿# Client-side auto-update: pull the latest Ed25519-signed feed, verify it, and
+# apply it. Paired with blackdemon-update.timer for "always current" behavior.
+# Set update.url in /opt/blackdemonav/blackdemon.toml (or pass --url here).
+[Unit]
+Description=BlackDemonAV signed-feed auto-update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/blackdemonav
+ExecStart=/usr/local/bin/blackdemon -c /opt/blackdemonav/blackdemon.toml update
+Nice=10
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=multi-user.target

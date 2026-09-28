@@ -275,7 +275,7 @@ service - any AV does). Here's exactly how to proceed on each system:
 > **Always verify what you downloaded** (takes 5 seconds and beats any cert):
 > ```bash
 > sha256sum -c SHA256SUMS          # bytes match the published hashes
-> aether verifyfile SHA256SUMS     # the hash list is Ed25519-signed by us -> ✓ TRUSTED
+> blackdemon verifyfile SHA256SUMS     # the hash list is Ed25519-signed by us -> ✓ TRUSTED
 > ```
 
 Prefer to build it yourself? Every installer is reproducible from source:
@@ -290,37 +290,37 @@ builds all of them for every architecture via GitHub Actions - see
 
 ```bash
 # build
-cargo build --release          # binary: target/release/aether
+cargo build --release          # binary: target/release/blackdemon
 
 # scan a file or folder
-aether scan ./Downloads -r
+blackdemon scan ./Downloads -r
 
 # real-time + advanced (Linux; some need root)
-aether sentinel --learn        # learn a clean baseline of running apps
-aether sentinel                # detect NEW / hidden / stealth processes
-aether memscan                 # scan process memory for injected/fileless code
-aether ransomguard ~/Documents # ransomware shield with rollback
-sudo aether protect /          # kernel on-access blocking (fanotify)
-aether netscan                 # live connections vs malware-port DB
+blackdemon sentinel --learn        # learn a clean baseline of running apps
+blackdemon sentinel                # detect NEW / hidden / stealth processes
+blackdemon memscan                 # scan process memory for injected/fileless code
+blackdemon ransomguard ~/Documents # ransomware shield with rollback
+sudo blackdemon protect /          # kernel on-access blocking (fanotify)
+blackdemon netscan                 # live connections vs malware-port DB
 
 # anti-theft & exploit defense
-aether memscan --secrets                 # flag harvested wallet keys/seeds in memory
-sudo aether stealerguard ~ --arm --watch --kill   # decoy traps + block infostealers
-aether clipguard --watch --restore       # crypto clipboard-hijack guard
-aether exploitscan suspicious.bin        # exploit-staging indicators (sleds, ROP, ...)
+blackdemon memscan --secrets                 # flag harvested wallet keys/seeds in memory
+sudo blackdemon stealerguard ~ --arm --watch --kill   # decoy traps + block infostealers
+blackdemon clipguard --watch --restore       # crypto clipboard-hijack guard
+blackdemon exploitscan suspicious.bin        # exploit-staging indicators (sleds, ROP, ...)
 
 # network defense (prints rules; --apply installs into the OS firewall, needs admin)
-sudo aether firewall --apply             # block malicious IPs/ports (nftables/netsh/pf)
-sudo aether webprotect --apply           # block phishing/malware domains (hosts file)
+sudo blackdemon firewall --apply             # block malicious IPs/ports (nftables/netsh/pf)
+sudo blackdemon webprotect --apply           # block phishing/malware domains (hosts file)
 
 # threat intel & reputation
-aether intel ...               # manage feeds
-aether reputation <file|hash>  # cloud known-good lookup (CIRCL, no key)
-aether cve CVE-2021-44228      # vulnerability lookup
-aether vt-scan <file>          # VirusTotal-contributor scan format
+blackdemon intel ...               # manage feeds
+blackdemon reputation <file|hash>  # cloud known-good lookup (CIRCL, no key)
+blackdemon cve CVE-2021-44228      # vulnerability lookup
+blackdemon vt-scan <file>          # VirusTotal-contributor scan format
 
 # run the engine as a service, or the desktop app
-aether serve                   # HTTP/JSON API
+blackdemon serve                   # HTTP/JSON API
 ./desktop/run.sh               # cross-platform GUI dashboard
 ```
 
@@ -332,7 +332,7 @@ Exit codes follow the ClamAV convention (`0` clean, `1` threat found).
 
 ```bash
 sha256sum -c SHA256SUMS        # binary matches the published hash
-aether verifyfile SHA256SUMS   # the hash list is signed by our offline key -> ✓ TRUSTED
+blackdemon verifyfile SHA256SUMS   # the hash list is signed by our offline key -> ✓ TRUSTED
 ```
 
 Or rebuild from source and compare: `./tools/reproducible-build.sh`.
@@ -348,22 +348,22 @@ frontend (CLI, daemon, desktop) builds on.
 ```mermaid
 flowchart TD
     subgraph FRONT [Frontends]
-      CLI[aether CLI]
+      CLI[blackdemon CLI]
       DAEMON[HTTP/JSON daemon]
       GUI[Tauri desktop]
     end
-    subgraph CORE [aether-core · orchestrator]
+    subgraph CORE [blackdemon-core · orchestrator]
       ENGINES[hash · YARA · patterns · heuristics · ML · LLM · sandbox · anomaly · intel · cache]
     end
     subgraph SUP [Supporting crates]
-      SIG[aether-signatures]
-      PAR[aether-parsers]
-      BEH[aether-behavior]
-      RT[aether-realtime]
-      FW[aether-firewall]
-      INTEL[aether-intel]
-      QUAR[aether-quarantine]
-      LLM[aether-llm · Aegis-50M]
+      SIG[blackdemon-signatures]
+      PAR[blackdemon-parsers]
+      BEH[blackdemon-behavior]
+      RT[blackdemon-realtime]
+      FW[blackdemon-firewall]
+      INTEL[blackdemon-intel]
+      QUAR[blackdemon-quarantine]
+      LLM[blackdemon-llm · Aegis-50M]
     end
     FRONT --> CORE --> SUP
 

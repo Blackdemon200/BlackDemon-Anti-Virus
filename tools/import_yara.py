@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """OPTIONAL: import a third-party community YARA ruleset.
 
-By design AetherAV ships ONLY our own authored rules (assets/rules/*.yar). This
+By design BlackDemonAV ships ONLY our own authored rules (assets/rules/*.yar). This
 tool is an explicit OPT-IN for users who also want extra community coverage. It
 writes to assets/community-rules/, which is NOT loaded by default - you must
 point `engines.yara_rules` at it (or merge files into assets/rules/) yourself,
@@ -26,7 +26,7 @@ import sys
 import tarfile
 import urllib.request
 
-ROOT = "/home/nexland/AetherAV"
+ROOT = "/home/nexland/BlackDemonAV"
 DEST = f"{ROOT}/assets/community-rules"
 DEFAULT_URL = "https://github.com/Neo23x0/signature-base/archive/refs/heads/master.tar.gz"
 
@@ -38,7 +38,7 @@ def main():
 
     print(f">> downloading {url}", flush=True)
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "AetherAV-rule-importer"})
+        req = urllib.request.Request(url, headers={"User-Agent": "BlackDemonAV-rule-importer"})
         with urllib.request.urlopen(req, timeout=180) as r:
             blob = r.read()
     except Exception as e:
@@ -72,7 +72,7 @@ def main():
 
     print(f">> wrote {written} THIRD-PARTY rule files to {DEST}", flush=True)
     print(">> these are NOT loaded by default. To use them (after reviewing):", flush=True)
-    print(f">>   aether -c <cfg> scan ...   with engines.yara_rules = {DEST}", flush=True)
+    print(f">>   blackdemon -c <cfg> scan ...   with engines.yara_rules = {DEST}", flush=True)
     print(">> or copy the ones you trust into assets/rules/.", flush=True)
     return 0
 

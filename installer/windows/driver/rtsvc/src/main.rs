@@ -1,8 +1,8 @@
-//! AetherAV real-time user-mode service (Windows).
+//! BlackDemonAV real-time user-mode service (Windows).
 //!
-//! Companion to the `aetherav.sys` minifilter. It connects to the driver's
-//! `\AetherAVPort`, receives a scan request for every file the kernel is about
-//! to open/execute, scans the bytes with the real AetherAV engine, and replies
+//! Companion to the `blackdemonav.sys` minifilter. It connects to the driver's
+//! `\BlackDemonAVPort`, receives a scan request for every file the kernel is about
+//! to open/execute, scans the bytes with the real BlackDemonAV engine, and replies
 //! allow/deny - so the driver can block malware BEFORE it runs.
 //!
 //! Runs as a proper Windows Service (auto-start) or, with `--console`, in the
@@ -11,7 +11,7 @@
 
 #[cfg(not(windows))]
 fn main() {
-    eprintln!("aether-rtsvc is Windows-only (it drives the aetherav.sys minifilter).");
+    eprintln!("blackdemon-rtsvc is Windows-only (it drives the blackdemonav.sys minifilter).");
 }
 
 #[cfg(windows)]
@@ -32,7 +32,7 @@ mod imp {
     use windows_service::service_control_handler::{self, ServiceControlHandlerResult};
     use windows_service::{define_windows_service, service_dispatcher};
 
-    const SERVICE_NAME: &str = "AetherAVRealtime";
+    const SERVICE_NAME: &str = "BlackDemonAVRealtime";
 
     pub fn main() {
         // Foreground debug mode.
@@ -92,7 +92,7 @@ mod imp {
             FILTER_MESSAGE_HEADER, FILTER_REPLY_HEADER,
         };
 
-        // Must match the structs in aetherav.c.
+        // Must match the structs in blackdemonav.c.
         #[repr(C)]
         struct ScanRequest {
             header: FILTER_MESSAGE_HEADER,
@@ -104,10 +104,10 @@ mod imp {
             block: u32,
         }
 
-        let cfg = aether_config::Config::load_or_default(None).unwrap_or_default();
-        let scanner = aether_core::Scanner::new(cfg).map_err(|e| format!("engine: {e}"))?;
+        let cfg = blackdemon_config::Config::load_or_default(None).unwrap_or_default();
+        let scanner = blackdemon_core::Scanner::new(cfg).map_err(|e| format!("engine: {e}"))?;
 
-        let port_name: Vec<u16> = std::ffi::OsStr::new("\\AetherAVPort")
+        let port_name: Vec<u16> = std::ffi::OsStr::new("\\BlackDemonAVPort")
             .encode_wide()
             .chain(std::iter::once(0))
             .collect();
@@ -124,7 +124,7 @@ mod imp {
         };
         if hr != 0 {
             return Err(format!(
-                "could not connect to \\AetherAVPort (hr=0x{hr:08x}); is aetherav.sys loaded?"
+                "could not connect to \\BlackDemonAVPort (hr=0x{hr:08x}); is blackdemonav.sys loaded?"
             ));
         }
 

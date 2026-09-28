@@ -24,5 +24,5 @@ for name in dir(mod):
         obj.get_vocab_base_pre = patched
 
 sys.argv = ["convert_hf_to_gguf.py", "/tmp/supra-merged",
-            "--outfile", "/tmp/aether-f16.gguf", "--outtype", "f16"]
+            "--outfile", "/tmp/blackdemon-f16.gguf", "--outtype", "f16"]
 mod.main()

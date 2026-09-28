@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # BlackDemon AV - retrain the Aegis-50M detection model end to end, in one flow:
 #
 #   1. dataset   gen_av_dataset.py  -> assets/datasets/av_train.jsonl (+ eval)
@@ -6,7 +6,7 @@
 #   3. export    -> q4_k_m GGUF      -> assets/models/aegis-50m.gguf
 #                  (one-shot via Unsloth, else merge -> convert -> quantize)
 #   4. publish   publish-model.sh   -> dist-model/{aegis-50m.gguf, aegis.manifest.json}
-#                  (Ed25519-signed + versioned; clients auto-pull via `aether model-update`)
+#                  (Ed25519-signed + versioned; clients auto-pull via `blackdemon model-update`)
 #
 # Run stages 1-3 on the box with the Unsloth env + GPU. Run stage 4 (signing) on
 # the OFFLINE signer that holds assets/keys/feed_private.key. Each stage is
@@ -14,7 +14,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-PY="${AETHER_PY:-/home/nexland/.unsloth/studio/unsloth_studio/bin/python}"
+PY="${BLACKDEMON_PY:-/home/nexland/.unsloth/studio/unsloth_studio/bin/python}"
 LLAMA="${LLAMA_CPP:-/home/nexland/.unsloth/llama.cpp}"
 MODEL="assets/models/aegis-50m.gguf"
 
@@ -27,7 +27,7 @@ log() { printf '\n=== %s ===\n' "$*"; }
 # --- 1) dataset -----------------------------------------------------------
 if [ "$SKIP_DATASET" = "0" ]; then
   log "1/4 generate dataset"
-  [ -x "$PY" ] || { echo "Unsloth python not found at $PY (set AETHER_PY)"; exit 1; }
+  [ -x "$PY" ] || { echo "Unsloth python not found at $PY (set BLACKDEMON_PY)"; exit 1; }
   "$PY" tools/gen_av_dataset.py
 else
   log "1/4 dataset (skipped)"
@@ -35,7 +35,7 @@ fi
 
 # --- 2/3) train + export GGUF --------------------------------------------
 if [ "$SKIP_TRAIN" = "0" ]; then
-  [ -x "$PY" ] || { echo "Unsloth python not found at $PY (set AETHER_PY)"; exit 1; }
+  [ -x "$PY" ] || { echo "Unsloth python not found at $PY (set BLACKDEMON_PY)"; exit 1; }
   prev_sha=""; [ -f "$MODEL" ] && prev_sha="$(sha256sum "$MODEL" | cut -d' ' -f1)"
 
   log "2/4 fine-tune Aegis-50M (this is the long step)"
@@ -50,7 +50,7 @@ if [ "$SKIP_TRAIN" = "0" ]; then
     "$PY" tools/convert_gguf.py
     QUANT="$(ls "$LLAMA"/build*/bin/llama-quantize 2>/dev/null | head -1 || true)"
     [ -n "$QUANT" ] || { echo "llama-quantize not found under $LLAMA/build*/bin"; exit 1; }
-    "$QUANT" /tmp/aether-f16.gguf "$MODEL" Q4_K_M
+    "$QUANT" /tmp/blackdemon-f16.gguf "$MODEL" Q4_K_M
   else
     log "3/4 GGUF produced by the training step"
   fi
@@ -72,5 +72,5 @@ fi
 
 log "DONE"
 echo "Upload dist-model/* to your model host and point clients' update.model_url at the manifest."
-echo "Clients verify signature + hash + anti-rollback, then atomically swap via: aether model-update"
+echo "Clients verify signature + hash + anti-rollback, then atomically swap via: blackdemon model-update"
 

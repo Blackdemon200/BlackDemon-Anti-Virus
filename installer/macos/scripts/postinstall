@@ -1,7 +1,7 @@
 #!/bin/bash
 # Set up real-time protection state + load the LaunchDaemon.
-mkdir -p "/Library/Application Support/AetherAV/quarantine" "/Library/Logs/AetherAV"
-PLIST=/Library/LaunchDaemons/org.aetherav.realtime.plist
+mkdir -p "/Library/Application Support/BlackDemonAV/quarantine" "/Library/Logs/BlackDemonAV"
+PLIST=/Library/LaunchDaemons/org.blackdemonav.realtime.plist
 if [ -f "$PLIST" ]; then
   launchctl bootstrap system "$PLIST" 2>/dev/null || launchctl load -w "$PLIST" 2>/dev/null || true
 fi

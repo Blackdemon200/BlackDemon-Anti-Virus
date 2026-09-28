@@ -4,7 +4,7 @@
 [workspace]
 
 [package]
-name = "aether-fuzz"
+name = "blackdemon-fuzz"
 version = "0.0.0"
 edition = "2021"
 publish = false
@@ -14,9 +14,9 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-aether-parsers = { path = "../crates/aether-parsers" }
-aether-unpack = { path = "../crates/aether-unpack" }
-aether-intel = { path = "../crates/aether-intel" }
+blackdemon-parsers = { path = "../crates/blackdemon-parsers" }
+blackdemon-unpack = { path = "../crates/blackdemon-unpack" }
+blackdemon-intel = { path = "../crates/blackdemon-intel" }
 
 [[bin]]
 name = "parse_pe"

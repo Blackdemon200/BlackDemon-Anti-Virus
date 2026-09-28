@@ -5,11 +5,11 @@ BlackDemon AV gets there, and what we can show today.
 
 ## Run our self-test (reproducible evidence)
 ```bash
-cargo build --release -p aether-cli
+cargo build --release -p blackdemon-cli
 ./tools/cert-selftest.sh            # -> dist/cert-report.txt
 ```
 It evaluates the engine against a clean corpus (a sample of real system
-binaries) and a malware corpus (the EICAR standard test file) using `aether
+binaries) and a malware corpus (the EICAR standard test file) using `blackdemon
 eval`, and reports detection rate, false-positive rate, precision and accuracy.
 
 Current internal numbers (small set; not a substitute for a lab): 100% detection
@@ -34,7 +34,7 @@ submission.
 - Auto-updating, Ed25519-signed signatures + model.
 - Real-time protection (Linux kernel fanotify today; Windows user-mode watcher
   now, kernel minifilter scaffolded).
-- An evaluation harness (`aether eval`) and this self-test.
+- An evaluation harness (`blackdemon eval`) and this self-test.
 
 ## Prerequisites still needed before submitting
 - **Windows real-time at kernel level** (sign + ship the minifilter) for the

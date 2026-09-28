@@ -8,7 +8,7 @@ script, a behavior summary) and emits one parseable line:
 Malicious | T1059.001 | encoded PowerShell download-execute cradle
 ```
 
-The engine (`aether-llm`) prompts the model and parses that line into a
+The engine (`blackdemon-llm`) prompts the model and parses that line into a
 `Verdict` (engine = `Llm`), fused with the other engines in the scan pipeline.
 
 ## 1. Dataset
@@ -46,27 +46,27 @@ above). Train on the assistant/response span only so it learns the verdict.
 
 ```python
 # in your Unsloth script, after training:
-model.save_pretrained_gguf("aether-llm", tokenizer, quantization_method="q4_k_m")
+model.save_pretrained_gguf("blackdemon-llm", tokenizer, quantization_method="q4_k_m")
 ```
 
 `q4_k_m` keeps a 50M model around ~30-40 MB - CPU-friendly on any device.
 Place it where the engine looks:
 
 ```bash
-cp aether-llm/*.gguf assets/models/aegis-50m.gguf
+cp blackdemon-llm/*.gguf assets/models/aegis-50m.gguf
 ```
 
 ## 4. Enable the engine
 
 ```toml
-# aether.toml
+# blackdemon.toml
 [engines]
 llm = true
 llm_runner = "llama-cli"     # llama.cpp; must be on PATH
 llm_model  = "assets/models/aegis-50m.gguf"
 ```
 
-Now `aether scan` runs the model on script/command artifacts and folds its
+Now `blackdemon scan` runs the model on script/command artifacts and folds its
 verdict in with hash/YARA/heuristics/ML/sandbox/intel. With no model present
 the engine is inert (zero impact) - so the build always works everywhere, and
 the model is a drop-in upgrade.
@@ -77,7 +77,7 @@ Use the labeled eval split and the engine's own evaluator:
 
 ```bash
 # compare model verdicts vs labels (your own harness over av_eval.jsonl), and
-aether eval --clean <benign-scripts> --malware <malicious-scripts>
+blackdemon eval --clean <benign-scripts> --malware <malicious-scripts>
 ```
 
 Track detection rate + false-positive rate; a tiny model is only worth shipping

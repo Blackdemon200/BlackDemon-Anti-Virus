@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <installer-gui-script minSpecVersion="2">
     <title>BlackDemon AV</title>
     <organization>org.blackdemonav</organization>
@@ -19,7 +19,7 @@
     <choice id="choice_app" title="BlackDemon AV App" description="The BlackDemon AV desktop application and detection engine.">
         <pkg-ref id="org.blackdemonav.app"/>
     </choice>
-    <choice id="choice_cli" title="Command-line scanner" description="Install the 'aether' command-line tool into /usr/local/bin.">
+    <choice id="choice_cli" title="Command-line scanner" description="Install the 'blackdemon' command-line tool into /usr/local/bin.">
         <pkg-ref id="org.blackdemonav.cli"/>
     </choice>
     <choice id="choice_rt" title="Real-Time Protection" description="Run on-access protection in the background (LaunchDaemon). Recommended.">

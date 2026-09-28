@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Download free, defensive threat-intel feeds (hashes & IOCs - never malware
 # binaries) from abuse.ch and fold them into BlackDemon AV's signature database.
 #
@@ -11,8 +11,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-AETHER="${AETHER_BIN:-./target/release/aether}"
-[ -x "$AETHER" ] || AETHER="./target/debug/aether"
+BLACKDEMON="${BLACKDEMON_BIN:-./target/release/blackdemon}"
+[ -x "$BLACKDEMON" ] || BLACKDEMON="./target/debug/blackdemon"
 STORE="assets/models/intel.json"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -27,7 +27,7 @@ dl(){ curl -fsSL --max-time 180 "${HDR[@]}" -o "$2" "$1" || echo "  (warning: $1
 dlx(){ local z="$TMP/dl.zip"; dl "$1" "$z"; if [ -s "$z" ]; then
          if head -c2 "$z" | grep -q PK; then 7z e -y -bso0 -bsp0 -o"$TMP/x" "$z" >/dev/null 2>&1; mv "$TMP"/x/* "$2" 2>/dev/null; rm -rf "$TMP/x"; else mv "$z" "$2"; fi
        fi; }
-imp(){ [ -s "$1" ] && "$AETHER" intel import "$1" --format "$2" --store "$STORE" --feed-version "$VER" "${@:3}"; }
+imp(){ [ -s "$1" ] && "$BLACKDEMON" intel import "$1" --format "$2" --store "$STORE" --feed-version "$VER" "${@:3}"; }
 
 if [ -n "$KEY" ] && [ -n "$FULL" ]; then
   echo "▸ downloading abuse.ch FULL dumps (Auth-Key set)…"
@@ -67,7 +67,7 @@ if [ -n "${YARA_RULES_GIT:-}" ] && command -v git >/dev/null; then
 fi
 
 echo "▸ exporting hash signatures…"
-"$AETHER" intel export-hashdb --store "$STORE" -o "$TMP/intel.db"
+"$BLACKDEMON" intel export-hashdb --store "$STORE" -o "$TMP/intel.db"
 
 # Keep the bundled base (EICAR test entry) and append the intel hashes, deduped.
 BASE="assets/signatures/hashes.db"

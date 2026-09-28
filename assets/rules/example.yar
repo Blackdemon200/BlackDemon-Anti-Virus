@@ -1,5 +1,5 @@
 /*
- * Starter YARA-X rules for AetherAV.
+ * Starter YARA-X rules for BlackDemonAV.
  * Real deployments load curated rule packs (e.g. YARAhub, internal IR rules).
  */
 

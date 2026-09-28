@@ -13,7 +13,7 @@ loads this when engines.tlsh is on.
 """
 import csv, io, os, sys, urllib.request, zipfile
 
-OUT = os.environ.get("AETHER_TLSH_DB", "assets/signatures/tlsh.db")
+OUT = os.environ.get("BLACKDEMON_TLSH_DB", "assets/signatures/tlsh.db")
 URL = "https://bazaar.abuse.ch/export/csv/full/"
 # MalwareBazaar full.csv column order.
 COL_SIGNATURE = 8
@@ -66,7 +66,7 @@ def parse_csv(text):
 
 
 def fetch():
-    req = urllib.request.Request(URL, headers={"User-Agent": "AetherAV/1.0"})
+    req = urllib.request.Request(URL, headers={"User-Agent": "BlackDemonAV/1.0"})
     key = os.environ.get("ABUSE_CH_AUTH_KEY")
     if key:
         req.add_header("Auth-Key", key)

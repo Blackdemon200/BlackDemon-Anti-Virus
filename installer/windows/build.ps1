@@ -16,13 +16,13 @@ $PSNativeCommandUseErrorActionPreference = $false
 Set-Location (Resolve-Path "$PSScriptRoot\..\..")
 
 Write-Host ">> building CLI engine (required)"
-cargo build --release -p aether-cli
-if ($LASTEXITCODE -ne 0) { throw "aether-cli build failed (exit $LASTEXITCODE)" }
+cargo build --release -p blackdemon-cli
+if ($LASTEXITCODE -ne 0) { throw "blackdemon-cli build failed (exit $LASTEXITCODE)" }
 
 Write-Host ">> building desktop GUI (best-effort)"
 $gui = $false
 cargo build --release --manifest-path desktop/src-tauri/Cargo.toml
-if ($LASTEXITCODE -eq 0 -and (Test-Path "desktop\src-tauri\target\release\aether-desktop.exe")) {
+if ($LASTEXITCODE -eq 0 -and (Test-Path "desktop\src-tauri\target\release\blackdemon-desktop.exe")) {
   $gui = $true
   Write-Host "   desktop GUI built OK"
 } else {
@@ -31,8 +31,8 @@ if ($LASTEXITCODE -eq 0 -and (Test-Path "desktop\src-tauri\target\release\aether
 
 $payload = "installer\windows\payload"
 New-Item -ItemType Directory -Force -Path $payload, "$payload\assets" | Out-Null
-Copy-Item "target\release\aether.exe" "$payload\aether.exe" -Force
-if ($gui) { Copy-Item "desktop\src-tauri\target\release\aether-desktop.exe" "$payload\aether-desktop.exe" -Force }
+Copy-Item "target\release\blackdemon.exe" "$payload\blackdemon.exe" -Force
+if ($gui) { Copy-Item "desktop\src-tauri\target\release\blackdemon-desktop.exe" "$payload\blackdemon-desktop.exe" -Force }
 Copy-Item "assets\*" "$payload\assets\" -Recurse -Force
 
 function Sign-File($file) {
@@ -45,8 +45,8 @@ function Sign-File($file) {
   }
 }
 
-Sign-File "$payload\aether.exe"
-if ($gui) { Sign-File "$payload\aether-desktop.exe" }
+Sign-File "$payload\blackdemon.exe"
+if ($gui) { Sign-File "$payload\blackdemon-desktop.exe" }
 
 Write-Host ">> running makensis (GUI=$gui)"
 # choco installs NSIS but doesn't refresh PATH in this session - resolve it.
@@ -61,8 +61,8 @@ if (-not $makensis) { throw "makensis not found - is NSIS installed?" }
 # .nsi resolves no matter what makensis' working directory is (Windows NSIS uses
 # the CWD; this removes that dependency entirely).
 $src = (Resolve-Path "installer\windows").Path
-if ($gui) { & $makensis /DWITH_GUI "/DSRCDIR=$src" "/DVERSION=$Version" "$src\aetherav.nsi" }
-else      { & $makensis "/DSRCDIR=$src" "/DVERSION=$Version" "$src\aetherav.nsi" }
+if ($gui) { & $makensis /DWITH_GUI "/DSRCDIR=$src" "/DVERSION=$Version" "$src\blackdemonav.nsi" }
+else      { & $makensis "/DSRCDIR=$src" "/DVERSION=$Version" "$src\blackdemonav.nsi" }
 if ($LASTEXITCODE -ne 0) { throw "makensis failed (exit $LASTEXITCODE)" }
 
 $setup = Join-Path $src "BlackDemonAV-Setup.exe"

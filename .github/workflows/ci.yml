@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Build (all platforms must compile)
@@ -41,7 +41,7 @@ jobs:
     name: fmt + clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -55,22 +55,22 @@ jobs:
     name: sandbox (Unicorn emulation backend)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       # The Unicorn Engine sys crate builds libunicorn via cmake.
       - name: install build deps
         run: sudo apt-get update && sudo apt-get install -y cmake
       - name: test with unicorn feature
-        run: cargo test -p aether-sandbox --features unicorn
+        run: cargo test -p blackdemon-sandbox --features unicorn
 
   bench-smoke:
     name: bench smoke
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       # Compile benches and run a single fast iteration to catch breakage.
       - name: bench (smoke)
-        run: cargo bench -p aether-core --bench scan_bench -- --warm-up-time 0.1 --measurement-time 0.5 --sample-size 10
+        run: cargo bench -p blackdemon-core --bench scan_bench -- --warm-up-time 0.1 --measurement-time 0.5 --sample-size 10

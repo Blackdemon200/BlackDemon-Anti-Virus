@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import logo from './BlackDemonAV.png'
-import wordmark from './aethertext.png'
+import wordmark from './blackdemontext.png'
 
 /* Canonical project links & socials. */
 const REPO = 'https://github.com/Blackdemon200/BlackDemon-Anti-Virus'
@@ -422,7 +422,7 @@ function Downloads() {
         <div className="dl-build-h">Or build from source</div>
         <pre><code>{`git clone https://github.com/Blackdemon200/BlackDemonAV
 cd BlackDemonAV && cargo build --release
-./target/release/aether scan ~/Downloads`}</code></pre>
+./target/release/blackdemon scan ~/Downloads`}</code></pre>
       </div>
     </section>
   )
@@ -676,11 +676,11 @@ function Home() {
 }
 
 /* ============================ LIVE THREAT DASHBOARD ============================ */
-/* Production backend (external nginx -> this PC's aether-site). Override at build:
-   VITE_API_BASE=https://aether-central.aswss.com npm run build               */
-const API = import.meta.env.VITE_API_BASE || 'https://aether-central.aswss.com'
+/* Production backend (external nginx -> this PC's blackdemon-site). Override at build:
+   VITE_API_BASE=https://blackdemon-central.aswss.com npm run build               */
+const API = import.meta.env.VITE_API_BASE || 'https://blackdemon-central.aswss.com'
 // Optional shared client key (set VITE_CLIENT_KEY at build to match the server's
-// AETHER_CLIENT_KEY) - an extra gate on top of the origin allowlist + JWT.
+// BLACKDEMON_CLIENT_KEY) - an extra gate on top of the origin allowlist + JWT.
 const CLIENT_KEY = import.meta.env.VITE_CLIENT_KEY || ''
 
 // Short-lived JWT obtained from /api/auth (origin-gated, rate-limited). The
@@ -689,7 +689,7 @@ let _token = null, _exp = 0
 async function authToken() {
   if (_token && Date.now() / 1000 < _exp - 30) return _token
   try {
-    const r = await fetch(API + '/api/auth', { headers: CLIENT_KEY ? { 'X-Aether-Key': CLIENT_KEY } : {} })
+    const r = await fetch(API + '/api/auth', { headers: CLIENT_KEY ? { 'X-BlackDemon-Key': CLIENT_KEY } : {} })
     if (!r.ok) return null
     const j = await r.json()
     _token = j.token; _exp = j.exp

@@ -25,9 +25,9 @@ the engine stays buildable in constrained environments.
 
 ## Near-term (Phase 2 entry points already stubbed)
 
-- `aether_parsers::FileFormat` already routes by magic bytes - ELF/Mach-O/PDF
+- `blackdemon_parsers::FileFormat` already routes by magic bytes - ELF/Mach-O/PDF
   parsers slot in behind it with no orchestrator changes.
-- `aether_common::EngineKind` reserves `Ml` and `Behavioral` so new engines emit
+- `blackdemon_common::EngineKind` reserves `Ml` and `Behavioral` so new engines emit
   verdicts through the existing aggregation path.
 - `Verdict::mitre` already carries ATT&CK technique IDs end-to-end (the
   heuristic engine emits `T1055` for injection-import combos today).

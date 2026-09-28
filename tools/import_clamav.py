@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Import ClamAV's whole-file hash signatures into AetherAV's hash DB.
+"""Import ClamAV's whole-file hash signatures into BlackDemonAV's hash DB.
 
 ClamAV CVD = 512-byte ASCII header + gzipped tar of signature files. We take
 only the *whole-file* hash signatures so they match our full-file scan:
@@ -9,7 +9,7 @@ only the *whole-file* hash signatures so they match our full-file scan:
 
 We deliberately SKIP *.mdb/*.msb (PE *section* hashes - partial, never match a
 whole-file digest) and the pattern signatures (*.ndb/*.ldb - need a pattern
-engine, not hashes). AetherAV's engine matches md5/sha1/sha256, so all of these
+engine, not hashes). BlackDemonAV's engine matches md5/sha1/sha256, so all of these
 are usable.
 
 Usage:
@@ -18,7 +18,7 @@ Usage:
 """
 import gzip, io, sys, os, tarfile, urllib.request
 
-ROOT = "/home/nexland/AetherAV"
+ROOT = "/home/nexland/BlackDemonAV"
 DB = f"{ROOT}/assets/signatures/hashes.db"
 MIRROR = "https://database.clamav.net"
 UA = "ClamAV/1.3.0"  # the mirror rejects unknown user agents
@@ -98,7 +98,7 @@ def main():
         return 1
 
     # Merge into the existing DB (dedup, keep header).
-    header = "# AetherAV hash signature database"
+    header = "# BlackDemonAV hash signature database"
     existing: set[str] = set()
     if os.path.exists(DB):
         for l in open(DB):

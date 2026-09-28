@@ -1,0 +1,16 @@
+[package]
+name = "blackdemon-config"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Layered configuration (defaults + TOML + env) for BlackDemon AV."
+
+[dependencies]
+blackdemon-common = { workspace = true }
+serde = { workspace = true }
+toml = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+

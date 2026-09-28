@@ -3,11 +3,11 @@
 
 A stdlib-only fallback to `train_pe_model.py` (which needs scikit-learn): trains
 by batch gradient descent with z-score standardization and exports a model JSON
-that `aether-ml` loads directly. Feed it a real labeled feature CSV for a
+that `blackdemon-ml` loads directly. Feed it a real labeled feature CSV for a
 production model; with `--demo` it trains on a synthetic dataset so the pipeline
 can be exercised end-to-end without any third-party packages.
 
-CSV columns must match aether_ml::features::PE_FEATURES (see FEATURES below),
+CSV columns must match blackdemon_ml::features::PE_FEATURES (see FEATURES below),
 plus a `label` column (1 = malicious, 0 = benign).
 
 Usage:

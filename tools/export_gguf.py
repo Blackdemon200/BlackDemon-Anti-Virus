@@ -8,7 +8,7 @@ import torch
 
 BASE = "/tmp/supra-base"
 OUT = "/tmp/supra-merged"
-ckpts = sorted(glob.glob("/home/nexland/AetherAV/tools/.train_out/checkpoint-*"),
+ckpts = sorted(glob.glob("./tools/.train_out/checkpoint-*"),
                key=lambda p: int(p.rsplit("-", 1)[1]))
 adapter = ckpts[-1]
 print(">> base:", BASE, "| adapter:", adapter, flush=True)

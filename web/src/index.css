@@ -159,7 +159,7 @@ svg{display:block}
 .compare .c-no{color:var(--faint);font-size:18px}
 .compare .c-part{color:var(--amber);font-size:12px;font-weight:600}
 .compare .c-txt{color:var(--txt);font-weight:600;font-variant-numeric:tabular-nums}
-/* highlight the AetherAV column */
+/* highlight the BlackDemonAV column */
 .compare .own{background:rgba(39,216,238,.07);border-left:1px solid rgba(39,216,238,.25);border-right:1px solid rgba(39,216,238,.25)}
 .compare thead th.own{background:rgba(39,216,238,.1);border-top-left-radius:0}
 .compare-note{text-align:center;color:var(--faint);font-size:12px;max-width:720px;margin:16px auto 0}

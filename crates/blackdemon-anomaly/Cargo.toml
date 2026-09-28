@@ -1,0 +1,18 @@
+[package]
+name = "blackdemon-anomaly"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Per-host behavioral baseline + online anomaly detection for BlackDemon AV."
+
+[dependencies]
+blackdemon-common = { workspace = true }
+blackdemon-behavior = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+

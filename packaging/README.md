@@ -5,20 +5,20 @@
 Install the binary and assets, then enable the units:
 
 ```bash
-sudo install -Dm755 target/release/aether /usr/local/bin/aether
-sudo mkdir -p /usr/local/share/aether /var/lib/aether/quarantine
-sudo cp -r assets /usr/local/share/aether/
+sudo install -Dm755 target/release/blackdemon /usr/local/bin/blackdemon
+sudo mkdir -p /usr/local/share/blackdemon /var/lib/blackdemon/quarantine
+sudo cp -r assets /usr/local/share/blackdemon/
 
 # Real-time on-access protection
-sudo cp packaging/systemd/aether-watch.service /etc/systemd/system/
-sudo systemctl enable --now aether-watch
+sudo cp packaging/systemd/blackdemon-watch.service /etc/systemd/system/
+sudo systemctl enable --now blackdemon-watch
 
 # Daily scheduled full scan
-sudo cp packaging/systemd/aether-scan.{service,timer} /etc/systemd/system/
-sudo systemctl enable --now aether-scan.timer
+sudo cp packaging/systemd/blackdemon-scan.{service,timer} /etc/systemd/system/
+sudo systemctl enable --now blackdemon-scan.timer
 
 # Keep signatures fresh (cron or a systemd timer):
-#   0 */6 * * *  cd /usr/local/share/aether && ABUSE_CH_AUTH_KEY=... ./tools/update-intel.sh
+#   0 */6 * * *  cd /usr/local/share/blackdemon && ABUSE_CH_AUTH_KEY=... ./tools/update-intel.sh
 ```
 
 ## Desktop GUI installers
@@ -46,13 +46,13 @@ concerns rather than code - the configuration hooks are in place.
 
 ## Real-time kernel sources (production)
 
-The userspace `aether watch` (cross-platform via `notify`) and `aether monitor`
+The userspace `blackdemon watch` (cross-platform via `notify`) and `blackdemon monitor`
 (`/proc`) cover on-access scanning without privileges. For kernel-grade
-telemetry, implement the `aether_realtime::EventSource` trait with:
+telemetry, implement the `blackdemon_realtime::EventSource` trait with:
 
 * **Linux:** eBPF via `aya` (tracepoints `sched_process_exec`, LSM `file_open`).
 * **Windows:** ETW + a minifilter driver.
 * **macOS:** the EndpointSecurity framework.
 
-All three emit `aether_behavior::Event`s into the same `Collector`, so they drop
+All three emit `blackdemon_behavior::Event`s into the same `Collector`, so they drop
 straight into the existing behavioral + anomaly pipeline.
