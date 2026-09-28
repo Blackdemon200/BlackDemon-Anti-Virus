@@ -1647,7 +1647,7 @@ fn run_clipguard(_config: Config, args: ClipguardArgs) -> Result<ExitCode> {
 /// via fanotify) detect + block any process that reads them or enumerates
 /// credential / wallet files.
 fn run_stealerguard(_config: Config, args: StealerguardArgs) -> Result<ExitCode> {
-    use blackdemon_realtime::stealerguard::{Decoys, StealerDetector};
+    use blackdemon_realtime::stealerguard::Decoys;
 
     if args.arm {
         match Decoys::plant(&args.dir) {
@@ -1716,6 +1716,7 @@ fn run_stealerguard(_config: Config, args: StealerguardArgs) -> Result<ExitCode>
     }
     #[cfg(not(target_os = "linux"))]
     {
+        use blackdemon_realtime::stealerguard::StealerDetector;
         let _ = StealerDetector::new();
         eprintln!("[stealerguard] live blocking (fanotify) is Linux-only for now; decoys are planted and classification works on all platforms.");
         Ok(ExitCode::SUCCESS)
