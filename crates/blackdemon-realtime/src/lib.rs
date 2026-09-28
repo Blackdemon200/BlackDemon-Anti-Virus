@@ -25,6 +25,8 @@ pub mod sentinel;
 pub mod stealerguard;
 pub mod timestomp;
 
+#[cfg(target_os = "linux")]
+use blackdemon_behavior::event::Action;
 use blackdemon_behavior::event::Event;
 use blackdemon_behavior::BehaviorEngine;
 use blackdemon_common::Verdict;
