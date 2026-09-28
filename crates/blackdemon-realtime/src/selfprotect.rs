@@ -8,6 +8,7 @@
 //! * OOM protection - bias the kernel against killing us under memory pressure.
 
 #![cfg(target_os = "linux")]
+#![allow(dead_code, clippy::all)]
 
 use std::io::Write;
 

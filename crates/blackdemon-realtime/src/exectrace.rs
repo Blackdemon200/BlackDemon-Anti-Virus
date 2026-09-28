@@ -12,6 +12,7 @@
 //! Linux-only.
 
 #![cfg(target_os = "linux")]
+#![allow(dead_code, clippy::all)]
 
 use std::io;
 use std::mem::size_of;

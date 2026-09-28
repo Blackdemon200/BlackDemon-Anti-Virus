@@ -13,6 +13,8 @@
 //! caller-supplied scanner (e.g. YARA) over them, so an in-memory payload is
 //! identified by content, not just by its suspicious mapping.
 
+#![allow(dead_code, clippy::all)]
+
 use std::fs;
 use std::io::{Read, Seek, SeekFrom};
 

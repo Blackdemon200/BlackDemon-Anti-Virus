@@ -8,6 +8,7 @@
 //! Requires `CAP_SYS_ADMIN` (run as root). Linux-only.
 
 #![cfg(target_os = "linux")]
+#![allow(dead_code, clippy::all)]
 
 use std::ffi::CString;
 use std::mem::size_of;

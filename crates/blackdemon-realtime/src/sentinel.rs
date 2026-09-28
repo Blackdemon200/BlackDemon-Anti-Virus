@@ -15,6 +15,8 @@
 //! needs an eBPF/kernel `exec` tracer (phase 2). Cross-view catches userland
 //! rootkits, masquerade, fileless and exe-deleted cases now.
 
+#![allow(dead_code, clippy::all)]
+
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 

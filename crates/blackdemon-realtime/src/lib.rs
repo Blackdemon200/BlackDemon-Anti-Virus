@@ -9,6 +9,8 @@
 //! [`ProcMonitor`] (Linux `/proc`) that emits real process-spawn events without
 //! root. Kernel sources implement the same trait and drop straight in.
 
+#![allow(dead_code, clippy::all)]
+
 pub mod clipguard;
 pub mod dns;
 #[cfg(target_os = "linux")]
