@@ -509,7 +509,8 @@ impl Scanner {
         if depth == 0 && !verdicts.is_empty() {
             if let Some(rep) = &self.reputation {
                 let hard_malware = verdicts.iter().any(|v| {
-                    v.engine == EngineKind::Hash && v.level == blackdemon_common::ThreatLevel::Malicious
+                    v.engine == EngineKind::Hash
+                        && v.level == blackdemon_common::ThreatLevel::Malicious
                 });
                 if !hard_malware && rep(&hashes) {
                     verdicts.clear();
@@ -879,7 +880,10 @@ mod tests {
 
         let scanner = Scanner::new(cfg).unwrap();
         let report = scanner.scan_bytes(Path::new("x.bin"), payload);
-        assert_eq!(report.disposition(), blackdemon_common::ThreatLevel::Malicious);
+        assert_eq!(
+            report.disposition(),
+            blackdemon_common::ThreatLevel::Malicious
+        );
         assert_eq!(report.verdicts[0].signature, "Test.Malware");
     }
 
@@ -908,7 +912,10 @@ mod tests {
 
         let scanner = Scanner::new(cfg).unwrap();
         let report = scanner.scan_bytes(Path::new("archive.zip"), &zip_bytes);
-        assert_eq!(report.disposition(), blackdemon_common::ThreatLevel::Malicious);
+        assert_eq!(
+            report.disposition(),
+            blackdemon_common::ThreatLevel::Malicious
+        );
         // The member verdict is namespaced by the archive entry name.
         assert!(report
             .verdicts
@@ -948,7 +955,10 @@ mod tests {
 
         let content = b"dropper config: beacon http://evil.example/c2 then fallback 45.9.1.2:8443";
         let report = scanner.scan_bytes(Path::new("sample.bin"), content);
-        assert_eq!(report.disposition(), blackdemon_common::ThreatLevel::Malicious);
+        assert_eq!(
+            report.disposition(),
+            blackdemon_common::ThreatLevel::Malicious
+        );
         assert!(report.verdicts.iter().any(|v| v.signature == "intel.url"));
         assert!(report.verdicts.iter().any(|v| v.signature == "intel.ip"));
     }

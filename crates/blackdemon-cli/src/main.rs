@@ -5,11 +5,11 @@
 //!   blackdemon config init [--output blackdemon.toml]   write a default config file
 //!   blackdemon info                                 show engine/build status
 
+use anyhow::{Context, Result};
 use blackdemon_common::logging::{self, LogFormat};
 use blackdemon_common::ThreatLevel;
 use blackdemon_config::Config;
 use blackdemon_core::Scanner;
-use anyhow::{Context, Result};
 use clap::{Args, Parser, Subcommand};
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -978,7 +978,11 @@ fn model_update_once(manifest_url: &str, model: &std::path::Path) -> Result<(boo
 
     // Verify the signature over "version|sha256" against the trusted key.
     let signed = format!("{version}|{sha256}");
-    if !blackdemon_intel::verify_detached(blackdemon_intel::TRUSTED_FEED_PUBKEY, signed.as_bytes(), sig) {
+    if !blackdemon_intel::verify_detached(
+        blackdemon_intel::TRUSTED_FEED_PUBKEY,
+        signed.as_bytes(),
+        sig,
+    ) {
         return Err(anyhow::anyhow!("untrusted model manifest - rejected"));
     }
 
@@ -1835,9 +1839,9 @@ fn run_watch(config: Config, args: WatchArgs) -> Result<ExitCode> {
     let scanner = Scanner::new(config).context("failed to initialize scanner")?;
     let watcher = FileWatcher::watch(&args.path).map_err(|e| anyhow::anyhow!(e))?;
     let mut vault = match &args.quarantine {
-        Some(dir) => {
-            Some(blackdemon_quarantine::Vault::open(dir).map_err(|e| anyhow::anyhow!(e.to_string()))?)
-        }
+        Some(dir) => Some(
+            blackdemon_quarantine::Vault::open(dir).map_err(|e| anyhow::anyhow!(e.to_string()))?,
+        ),
         None => None,
     };
 
@@ -1903,9 +1907,9 @@ fn run_protect(mut config: Config, args: ProtectArgs) -> Result<ExitCode> {
     config.engines.sandbox = false;
     let scanner = Scanner::new(config).context("failed to initialize scanner")?;
     let mut vault = match &args.quarantine {
-        Some(dir) => {
-            Some(blackdemon_quarantine::Vault::open(dir).map_err(|e| anyhow::anyhow!(e.to_string()))?)
-        }
+        Some(dir) => Some(
+            blackdemon_quarantine::Vault::open(dir).map_err(|e| anyhow::anyhow!(e.to_string()))?,
+        ),
         None => None,
     };
 
@@ -2204,7 +2208,9 @@ fn run_sentinel(config: Config, args: SentinelArgs) -> Result<ExitCode> {
 /// Ransomware shield: snapshot + canaries + automatic rollback on attack.
 fn run_ransomguard(args: RansomguardArgs) -> Result<ExitCode> {
     use blackdemon_realtime::ransomguard::RansomGuard;
-    let vault = args.vault.unwrap_or_else(|| args.dir.join(".blackdemon-vault"));
+    let vault = args
+        .vault
+        .unwrap_or_else(|| args.dir.join(".blackdemon-vault"));
     let guard = RansomGuard::arm(&args.dir, &vault).map_err(|e| anyhow::anyhow!(e))?;
     println!(
         "ransomware shield ACTIVE on {} - snapshot taken, canaries planted. Ctrl-C to stop.",
@@ -2430,7 +2436,8 @@ fn run_feedsign(args: FeedsignArgs) -> Result<ExitCode> {
 /// a client performs before applying an update.
 fn run_feedverify(args: FeedverifyArgs) -> Result<ExitCode> {
     let text = std::fs::read_to_string(&args.feed)?;
-    let feed = blackdemon_intel::Feed::from_json(&text).map_err(|e| anyhow::anyhow!(e.to_string()))?;
+    let feed =
+        blackdemon_intel::Feed::from_json(&text).map_err(|e| anyhow::anyhow!(e.to_string()))?;
     if feed.verify_trusted() {
         println!("✓ TRUSTED - signature valid; update would be applied.");
         Ok(ExitCode::SUCCESS)

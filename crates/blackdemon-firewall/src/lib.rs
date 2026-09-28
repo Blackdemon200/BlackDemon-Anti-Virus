@@ -213,7 +213,9 @@ impl RuleSet {
             let _ = writeln!(s, ":: {}", self.note);
         }
         // Clean previous BlackDemonAV rules first (ignore "not found").
-        s.push_str("netsh advfirewall firewall delete rule name=\"BlackDemonAV-block-ip\" >nul 2>&1\n");
+        s.push_str(
+            "netsh advfirewall firewall delete rule name=\"BlackDemonAV-block-ip\" >nul 2>&1\n",
+        );
         s.push_str(
             "netsh advfirewall firewall delete rule name=\"BlackDemonAV-block-port\" >nul 2>&1\n",
         );

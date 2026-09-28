@@ -13,8 +13,8 @@
 //! anchors go into one Aho-Corasick automaton (single O(n) pass over the file);
 //! the full pattern (honouring `??`) is only verified around each anchor hit.
 
-use blackdemon_common::{Error, Result};
 use aho_corasick::{AhoCorasick, AhoCorasickBuilder, AhoCorasickKind, MatchKind};
+use blackdemon_common::{Error, Result};
 use std::path::Path;
 
 struct Sig {

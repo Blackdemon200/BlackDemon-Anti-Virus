@@ -79,7 +79,10 @@ impl RansomGuard {
 
         // Plant canaries (named to sort first/last so attackers hit them early).
         let mut canaries = Vec::new();
-        for name in ["__blackdemon_canary_0001.txt", "zzz__blackdemon_canary_9999.txt"] {
+        for name in [
+            "__blackdemon_canary_0001.txt",
+            "zzz__blackdemon_canary_9999.txt",
+        ] {
             let cp = dir.join(name);
             if fs::write(&cp, CANARY_BODY).is_ok() {
                 let _ = fs::copy(&cp, vault.join(name));

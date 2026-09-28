@@ -1,11 +1,10 @@
 name: scorecard
-# OpenSSF Scorecard - automated supply-chain security scoring + public badge.
+# OpenSSF Scorecard - automated supply-chain security scoring.
+# Disabled: the scorecard-action pulls from gcr.io which requires
+# Google Cloud billing. Re-enable by uncommenting 'on:' below once
+# you have GCP billing set up, or remove this file entirely.
 on:
-  branch_protection_rule:
-  schedule:
-    - cron: "0 6 * * 1"
-  push:
-    branches: ["main"]
+  workflow_dispatch: # manual only - disabled automatic triggers
 
 permissions: read-all
 
@@ -13,6 +12,8 @@ jobs:
   analysis:
     name: Scorecard analysis
     runs-on: ubuntu-latest
+    # Skip unless manually triggered
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     permissions:
       security-events: write
       id-token: write
