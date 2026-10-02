@@ -1,3 +1,12 @@
+## What's new in v2026.1.1
+
+### 🔧 Bug Fixes
+
+- **Windows**: Fixed `VCRUNTIME140.dll` / `VCRUNTIME140_1.dll` missing errors on clean Windows installs (VMs, fresh systems, Windows without Visual C++ Redistributable). The installer now **bundles all required Microsoft Visual C++ Runtime DLLs** directly — no manual VC++ Redist installation needed.
+- **Windows**: Enabled static CRT linking (`+crt-static`) as an additional safeguard, so both the CLI engine and the desktop app no longer depend on the system VC runtime at all.
+
+---
+
 ## Install
 
 Download the installer for your OS and CPU below.
@@ -31,5 +40,3 @@ real-time security service needs **administrator / root** on any OS.
 sha256sum -c SHA256SUMS          # bytes match the published hashes
 blackdemon verifyfile SHA256SUMS     # the hash list is Ed25519-signed by us -> TRUSTED
 ```
-
-
