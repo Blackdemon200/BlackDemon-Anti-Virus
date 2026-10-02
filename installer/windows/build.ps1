@@ -15,6 +15,9 @@ $ErrorActionPreference = "Stop"
 $PSNativeCommandUseErrorActionPreference = $false
 Set-Location (Resolve-Path "$PSScriptRoot\..\..")
 
+# Ensure the C runtime is statically linked (no VCRUNTIME140.dll / VCRUNTIME140_1.dll dependencies on clean Windows machines).
+$env:RUSTFLAGS = "-C target-feature=+crt-static"
+
 Write-Host ">> building CLI engine (required)"
 cargo build --release -p blackdemon-cli
 if ($LASTEXITCODE -ne 0) { throw "blackdemon-cli build failed (exit $LASTEXITCODE)" }
@@ -35,6 +38,30 @@ Copy-Item "target\release\blackdemon.exe" "$payload\blackdemon.exe" -Force
 if ($gui) { Copy-Item "desktop\src-tauri\target\release\blackdemon-desktop.exe" "$payload\blackdemon-desktop.exe" -Force }
 Copy-Item "assets\*" "$payload\assets\" -Recurse -Force
 
+# Bundle Microsoft Visual C++ Runtime DLLs so the app runs out-of-the-box on clean Windows installs without requiring manual VC Redist installation
+Write-Host ">> bundling VC runtime DLLs"
+$vcSearchPaths = @(
+  "${env:ProgramFiles(x86)}\Microsoft Visual Studio\*\*\VC\Redist\MSVC\*\x64\Microsoft.VC*.CRT",
+  "${env:ProgramFiles}\Microsoft Visual Studio\*\*\VC\Redist\MSVC\*\x64\Microsoft.VC*.CRT",
+  "$env:SystemRoot\System32"
+)
+$vcDlls = @("vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll", "msvcp140_1.dll", "msvcp140_2.dll", "msvcp140_atomic_wait.dll", "msvcp140_codecvt_ids.dll", "concrt140.dll", "vccorlib140.dll")
+
+foreach ($dll in $vcDlls) {
+  $sourceDll = $null
+  foreach ($searchPath in $vcSearchPaths) {
+    $found = Get-ChildItem -Path (Join-Path $searchPath $dll) -ErrorAction SilentlyContinue | Select-Object -Last 1
+    if ($found -and (Test-Path $found.FullName)) {
+      $sourceDll = $found.FullName
+      break
+    }
+  }
+  if ($sourceDll) {
+    Copy-Item $sourceDll "$payload\$dll" -Force
+    Write-Host "   bundled runtime DLL: $dll"
+  }
+}
+
 function Sign-File($file) {
   if ($env:WIN_CERT_PFX) {
     Write-Host ">> signing $file"
@@ -47,6 +74,7 @@ function Sign-File($file) {
 
 Sign-File "$payload\blackdemon.exe"
 if ($gui) { Sign-File "$payload\blackdemon-desktop.exe" }
+Get-ChildItem "$payload\*.dll" -ErrorAction SilentlyContinue | ForEach-Object { Sign-File $_.FullName }
 
 Write-Host ">> running makensis (GUI=$gui)"
 # choco installs NSIS but doesn't refresh PATH in this session - resolve it.

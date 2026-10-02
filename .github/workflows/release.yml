@@ -114,6 +114,7 @@ jobs:
       - name: Build + package (+ sign if cert provided)
         shell: pwsh
         env:
+          RUSTFLAGS: "-C target-feature=+crt-static"
           WIN_CERT_PFX: ${{ secrets.WIN_CERT_PFX_PATH }}
           WIN_CERT_PASS: ${{ secrets.WIN_CERT_PASS }}
         run: |

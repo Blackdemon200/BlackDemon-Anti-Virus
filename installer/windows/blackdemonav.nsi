@@ -1,4 +1,4 @@
-﻿; BlackDemon AV - premium Windows installer (NSIS / Modern UI 2).
+; BlackDemon AV - premium Windows installer (NSIS / Modern UI 2).
 ; Build:  makensis BlackDemon AV.nsi   ->  BlackDemonAV-Setup.exe
 ; Stage the real Windows binaries into payload/ (blackdemon.exe, blackdemon-desktop.exe)
 ; and the engine data into payload/assets/ before building a release.
@@ -90,6 +90,8 @@ Section "BlackDemon AV core engine + app" SEC_CORE
 !endif
   File "${SRCDIR}\payload\${CLIBIN}"
   File "${SRCDIR}\assets\BlackDemonAV.ico"
+  ; Bundle runtime DLLs (VCRUNTIME140.dll, MSVCP140.dll, etc.)
+  File /nonfatal "${SRCDIR}\payload\*.dll"
   SetOutPath "$INSTDIR\assets"
   File /r "${SRCDIR}\payload\assets\*.*"
 
@@ -167,6 +169,7 @@ Section "Uninstall"
   DeleteRegKey HKCR "*\shell\BlackDemonAV"
 
   RMDir /r "$INSTDIR\assets"
+  Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\${DESKBIN}"
   Delete "$INSTDIR\${CLIBIN}"
   Delete "$INSTDIR\BlackDemonAV.ico"
