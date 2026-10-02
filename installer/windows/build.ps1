@@ -7,7 +7,7 @@
 # Optional Authenticode signing (SmartScreen-clean download):
 #   $env:WIN_CERT_PFX  = "C:\path\blackdemonav.pfx"
 #   $env:WIN_CERT_PASS = "..."
-param([string]$Version = "2026.1.0")
+param([string]$Version = "2026.1.1")
 $ErrorActionPreference = "Stop"
 # PowerShell 7.4+ otherwise THROWS on any native non-zero exit (e.g. the
 # best-effort GUI build), aborting before our explicit $LASTEXITCODE checks.

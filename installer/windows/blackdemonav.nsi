@@ -13,7 +13,7 @@ SetCompressor /SOLID lzma
 !define APPNAME      "BlackDemon AV"
 !define COMPANY      "BlackDemon AV"
 !ifndef VERSION
-  !define VERSION    "2026.1.0"   ; overridden by build.ps1 via /DVERSION=<tag>
+  !define VERSION    "2026.1.1"   ; overridden by build.ps1 via /DVERSION=<tag>
 !endif
 !define DESKBIN      "blackdemon-desktop.exe"
 !define CLIBIN       "blackdemon.exe"

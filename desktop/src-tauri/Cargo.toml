@@ -3,7 +3,7 @@
 
 [package]
 name = "blackdemon-desktop"
-version = "2026.1.0"
+version = "2026.1.1"
 edition = "2021"
 authors = ["BlackDemon <https://github.com/Blackdemon200>"]
 description = "BlackDemon AV cross-platform desktop application (Tauri v2)."
